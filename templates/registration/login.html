@@ -24,15 +24,11 @@
 				<button id="login-button" class="btn btn-success display-7" type="submit">Login</button>
 			</div>
 		</form>
-	</div>
-	<div id="extra-buttons">
-		<a href="{% url 'password_reset' %}">Forgot your password?</a>
-		<br>
-		<a href="{% url 'signup' %}">Register</a>
+		<div class="d-flex flex-column justify-content-center pt-4">
+			<a class="btn link-warning" href="{% url 'password_reset' %}">Forgot your password?</a>
+			<p class="text-center">or</p>
+			<a class="btn link-success" href="{% url 'signup' %}">Already have an account? Register here</a>
+		</div>
 	</div>
 </section>
-
-
-
-
 {% endblock content %}

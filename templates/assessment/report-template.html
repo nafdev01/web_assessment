@@ -21,16 +21,11 @@
             border: 1px solid #000;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 10px;
             padding: 10px;
         }
 
         .card-body {
             padding: 10px;
-        }
-
-        .card-title {
-            font-size: 2.5rem;
         }
 
         .card-text {
@@ -59,20 +54,28 @@
 
         .link-success {
             color: #198754;
+            text-decoration: none;
         }
 
         .link-primary {
             color: #0d6efd;
+            padding: 5px;
         }
 
         .display-2 {
-            font-size: 4rem;
+            font-size: 7rem;
             text-align: center;
+            font-weight: lighter;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            margin-bottom: 0px;
         }
 
         .display-3 {
-            font-size: 2rem;
+            font-size: 4rem;
             text-align: center;
+            font-weight: lighter;
+            text-decoration: underline;
         }
 
         .text-uppercase {
@@ -82,29 +85,53 @@
         #vulnerabilityAccordion {
             width: 80%;
         }
+
+        ul.reference-list {
+            list-style-type: none;
+            padding: 20px;
+            margin-left: 40px;
+        }
+
+        ul.reference-list li.reference-list-item {
+            padding: 5px;
+            border: none;
+            font-size: 1.5rem;
+        }
+        .fs-5 {
+            font-size: 1.5rem;
+        }
+        .display-4 {
+            font-size: 2.5rem;
+            text-align: center;
+            font-weight: lighter;
+            text-decoration: underline;
+            border: none;
+            padding: 0px;
+            margin: 0px;
+        }
     </style>
 </head>
 
 <body>
     <section class="m-5">
-        <h4 class="card-title mbr-fonts-style mb-0 display-2 text-center">Report</h4>
+        <h4 class="text-center display-2">Report</h4>
 
         <div class="d-flex justify-content-center mb-3 p-3">
             <div class="card">
                 <div class="card-body">
-                    <p class="text-uppercase card-text">
-                        <span class="fs-5">Client:</span>
+                    <p class="card-text">
+                        <span class="fs-5">CLIENT:</span>
                         <span class="fs-5  fst-italic">&nbsp;{{ assessment.client.get_full_name }}</span>
                     </p>
                     <p class="card-text">
-                        <span class="text-uppercase fs-5">Website:</span>
+                        <span class="fs-5">WEBSITE:</span>
                         <span class="fs-5 fst-italic">&nbsp;
                             <a class="link-success" href="{{ assessment.website }}" target="_blank">
                                 {{ assessment.website }}</a>
                         </span>
                     </p>
-                    <p class="text-uppercase card-text">
-                        <span class="fs-5">Tested On:</span>
+                    <p class="card-text">
+                        <span class="fs-5">ASSESSED ON:</span>
                         <span class="fs-5  fst-italic">&nbsp;{{ assessment.tested_on }}</span>
                     </p>
                 </div>
@@ -160,16 +187,17 @@
                         </p>
 
                         <div class="card px-2 mt-3">
-                            <ul>
+                            <h2 class="display-4">References</h2>
+                            <ul class="reference-list">
                                 {% for reference in classification.references.all %}
-                                <li>
-                                    <a class="link-primary" href="{{ reference.reference_link }}">
+                                <li class="reference-list-item">
+                                    <a style="text-decoration: dashed;" class="link-primary"
+                                        href="{{ reference.reference_link }}">
                                         {{ reference.name }}
                                     </a>
                                 </li>
                                 {% endfor %}
                             </ul>
-
                         </div>
                         {% endfor %}
                     </div>

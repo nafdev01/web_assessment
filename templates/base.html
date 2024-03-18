@@ -152,7 +152,7 @@
                     </div>
                     {% else %}
                     <div class="navbar-buttons mbr-section-btn me-2">
-                        <a class="btn btn-white display-8" href="#">
+                        <a class="btn btn-white display-8" href="{% url 'assess_site' %}">
                             Assess
                         </a>
                         <a class="btn btn-danger display-8" href="{% url 'log_out' %}">
@@ -176,9 +176,11 @@
         </nav>
     </section>
 
-    {% block content %}
+    <main class="min-vh-100">
+        {% block content %}
 
-    {% endblock content %}
+        {% endblock content %}
+    </main>
 
     <section data-bs-version="5.1" class="footer2 structurem5 cid-tmYV2YWTCM" once="footers" id="afooter2-9">
         <div class="section-border-item section-border-item_top"></div>

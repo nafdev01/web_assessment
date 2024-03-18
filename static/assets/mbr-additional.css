@@ -62,6 +62,18 @@ body {
 .display-8 > .mbr-iconfont {
   font-size: 1.40625rem;
 }
+
+.display-9 {
+  font-family: 'Spline Sans Mono', monospace;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  word-spacing: -0.15em;
+}
+.display-9 > .mbr-iconfont {
+  font-size: 1.40625rem;
+}
+
 /* ---- Fluid typography for mobile devices ---- */
 /* 1.4 - font scale ratio ( bootstrap == 1.42857 ) */
 /* 100vw - current viewport width */

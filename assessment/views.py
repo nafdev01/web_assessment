@@ -39,16 +39,14 @@ def assess_site(request):
         # delete the feed file
         subprocess.run(["rm", "feed.json"])
 
-        vuln_assessment = VulnAssessment(
-            client=request.user, website=website, search_output=vulnerabilities
-        )
+        vuln_assessment = VulnAssessment(client=request.user, website=website)
         vuln_assessment.save()
 
         create_found_vulnerabilities(vuln_assessment, vulnerabilities)
 
         messages.success(
             request,
-            f"Your vulnerablity assessment for {website} was successful!. {len(vulnerabilities)} vulnerabilities found.",
+            f"Your vulnerablity assessment for {website} was successful! {len(vulnerabilities)} vulnerabilities found.",
         )
         return redirect("view_report", vuln_assessment_id=vuln_assessment.id)
 
@@ -67,11 +65,7 @@ def view_results(request):
 
 def view_report(request, vuln_assessment_id):
     vuln_assessment = VulnAssessment.objects.get(id=vuln_assessment_id)
-    found_vulnerabilities = vuln_assessment.vulnerabilities.all()
 
     template_name = "assessment/report.html"
-    context = {
-        "vuln_assessment": vuln_assessment,
-        "found_vulnerabilities": found_vulnerabilities,
-    }
+    context = {"assessment": vuln_assessment}
     return render(request, template_name, context)

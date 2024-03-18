@@ -1,5 +1,5 @@
 import json
-from .models import VulnAssessment, FoundVulnerability
+from .models import VulnAssessment, FoundVulnerability, Classification
 
 
 def get_search_output(input_file):
@@ -37,3 +37,13 @@ def create_found_vulnerabilities(assessment, vulnerabilities):
             curl_command=vulnerability["curl_command"],
         )
         found_vulnerability.save()
+
+        # Link the vulnerability to the appropriate classification
+        classification_name = vulnerability["Vulnerability"]
+        try:
+            classification = Classification.objects.get(name=classification_name)
+            found_vulnerability.classification.add(classification)
+        except Classification.DoesNotExist:
+            print(f"No Classification found for name {classification_name}")
+        except Exception as e:
+            print(f"Error linking classification to found vulnerability: {e}")

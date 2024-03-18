@@ -11,7 +11,6 @@ class VulnAssessment(models.Model):
     )
     website = models.CharField(max_length=100)
     tested_on = models.DateTimeField(default=timezone.now)
-    search_output = models.TextField()
 
     def __str__(self):
         return self.website
@@ -35,6 +34,7 @@ class FoundVulnerability(models.Model):
     http_request = models.TextField()
     curl_command = models.TextField()
     found_on = models.DateTimeField(default=timezone.now)
+    classification = models.ManyToManyField("Classification", blank=True)
 
     def __str__(self):
         return (

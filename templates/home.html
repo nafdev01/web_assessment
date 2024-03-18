@@ -19,11 +19,11 @@
                     applications.</p>
                 <div class="mbr-section-btn mt-3">
                     {% if user.is_authenticated %}
-                    <a class="btn btn-info display-4" href="{% url 'home' %}">
+                    <a class="btn btn-info display-4" href="{% url 'assess_site' %}">
                         Start Assessment
                     </a>
                     {% else %}
-                    <a class="btn btn-info display-4" href="{% url 'home' %}">
+                    <a class="btn btn-info display-4" href="{% url 'signup' %}">
                         Get Started
                     </a>
                     {% endif %}

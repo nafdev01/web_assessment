@@ -1,8 +1,8 @@
 # accounts/urls.py
-from django.urls import path, include
-from .views import *
 from django.contrib.auth import urls as auth_urls
+from django.urls import include, path
 
+from .views import *
 
 urlpatterns = [
     # standard auth urls

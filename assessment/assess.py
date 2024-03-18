@@ -26,7 +26,7 @@ def create_found_vulnerabilities(assessment, vulnerabilities):
     # Create found vulnerabilities
     for vulnerability in vulnerabilities:
         found_vulnerability = FoundVulnerability(
-            assessment=assessment,
+            vuln_assessment=assessment,
             vulnerability_type=vulnerability["Vulnerability"],
             method=vulnerability["method"],
             path=vulnerability["path"],

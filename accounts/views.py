@@ -1,13 +1,12 @@
-from django.shortcuts import render
-from django.contrib.auth import (
-    authenticate,
-    login as login_client,
-    logout as logout_client,
-)
-from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as login_client
+from django.contrib.auth import logout as logout_client
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import redirect, render
+
 from .forms import ClientRegistrationForm
+
 
 # Create your views here.
 def login(request):

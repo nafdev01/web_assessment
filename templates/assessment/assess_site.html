@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Assess URL{% endblock title %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100">
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <div class="input-group mb-3">
+                <input id="url-input" type="url" name="url-here" placeholder="Enter url here" class="form-control"
+                    aria-label="Url to test" aria-describedby="test-btn" required>
+                <button class="btn btn-success" id="test-btn" type="submit">Test</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

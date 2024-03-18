@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "accounts",
     "assessment",
     "django_bootstrap5",
+    "django_extensions",
     # default apps
     "django.contrib.admin",
     "django.contrib.auth",

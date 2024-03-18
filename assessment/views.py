@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import VulnAssessment
 import subprocess
+
+from django.contrib import messages
+from django.shortcuts import redirect, render
+
 from .assess import create_found_vulnerabilities, get_search_output
+from .models import VulnAssessment
 
 
 def assess_site(request):
@@ -37,7 +39,9 @@ def assess_site(request):
         # delete the feed file
         subprocess.run(["rm", "feed.json"])
 
-        vuln_assessment = VulnAssessment(website=website, search_output=vulnerabilities)
+        vuln_assessment = VulnAssessment(
+            client=request.user, website=website, search_output=vulnerabilities
+        )
         vuln_assessment.save()
 
         create_found_vulnerabilities(vuln_assessment, vulnerabilities)
@@ -46,9 +50,9 @@ def assess_site(request):
             request,
             f"Your vulnerablity assessment for {website} was successful!. {len(vulnerabilities)} vulnerabilities found.",
         )
-        return redirect("home")
+        return redirect("view_report", vuln_assessment_id=vuln_assessment.id)
 
-    template_name = "home.html"
+    template_name = "assessment/assess_site.html"
     context = {}
     return render(request, template_name, context)
 
@@ -61,9 +65,9 @@ def view_results(request):
     return render(request, template_name, context)
 
 
-def view_report(request, vun_assessment_id):
-    vuln_assessment = VulnAssessment.objects.get(id=vun_assessment_id)
-    found_vulnerabilities = vuln_assessment.foundvulnerability_set.all()
+def view_report(request, vuln_assessment_id):
+    vuln_assessment = VulnAssessment.objects.get(id=vuln_assessment_id)
+    found_vulnerabilities = vuln_assessment.vulnerabilities.all()
 
     template_name = "assessment/report.html"
     context = {

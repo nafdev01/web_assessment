@@ -3,8 +3,8 @@
 {% block title %}Report | {{ assessment }}{% endblock title %}
 
 {% block content %}
-<div class="d-flex justify-content-end m-2">
-    <a class="btn btn-dark" href="{% url 'view_report_pdf' assessment.id %}">Print Report</a>
+<div class="mbr-section-btn mt-3 d-flex justify-content-end m-3">
+    <a class="btn btn-info display-7" href="{% url 'view_report_pdf' assessment.id %}">Print Report</a>
 </div>
 
 <section class="mb-5 mx-5">

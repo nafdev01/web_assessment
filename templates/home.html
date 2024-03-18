@@ -169,7 +169,7 @@
         <div class="row justify-content-center" id="contact">
             <div class="col-12 col-lg-8">
                 <h1 class="mbr-section-title mbr-fonts-style mb-0 display-2">Contact Us</h1>
-                <form action="" method="post" role="form" class="mbr-text mbr-fonts-style mb-0 display-7">
+                <form action="{% url 'contact' %}" method="post" role="form" class="mbr-text mbr-fonts-style mb-0 display-7">
                     {% csrf_token %}
                     <div class="row g-4">
                         <div class="form-group col-md-6">

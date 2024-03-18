@@ -5,7 +5,7 @@ from django.contrib.auth import logout as logout_client
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 
-from .forms import ClientRegistrationForm
+from .forms import ClientRegistrationForm, ContactForm
 
 
 # Create your views here.
@@ -65,3 +65,18 @@ def log_out(request):
     logout_client(request)
     messages.success(request, "You have been logged out.")
     return redirect("home")
+
+
+def contact(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                "Your contact request has been processed. We will reply as soon as possible",
+            )
+            return redirect("home")
+    else:
+        form = ContactForm()
+    return render(request, "contact.html", {"form": form})

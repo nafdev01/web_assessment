@@ -1,12 +1,19 @@
 import subprocess
+from io import BytesIO
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.template.loader import get_template, render_to_string
+from django.views.decorators.csrf import csrf_exempt
+from xhtml2pdf import pisa
 
 from .assess import create_found_vulnerabilities, get_search_output
 from .models import VulnAssessment
 
 
+@login_required
 def assess_site(request):
     if request.method == "POST":
         website = request.POST["url-here"]
@@ -55,6 +62,7 @@ def assess_site(request):
     return render(request, template_name, context)
 
 
+@login_required
 def view_results(request):
     assessments = VulnAssessment.objects.all()
 
@@ -63,9 +71,31 @@ def view_results(request):
     return render(request, template_name, context)
 
 
+@login_required
 def view_report(request, vuln_assessment_id):
     vuln_assessment = VulnAssessment.objects.get(id=vuln_assessment_id)
 
     template_name = "assessment/report.html"
     context = {"assessment": vuln_assessment}
     return render(request, template_name, context)
+
+
+@login_required
+def view_report_pdf(request, vuln_assessment_id):
+    vuln_assessment = VulnAssessment.objects.get(id=vuln_assessment_id)
+    assessed_on = vuln_assessment.tested_on.strftime("%B %d, %Y")
+
+    template_name = "assessment/report-template.html"
+    context = {"assessment": vuln_assessment}
+    html_string = render_to_string(template_name, context)
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = (
+        f"inline; filename={request.user.get_full_name()}'s Report for {vuln_assessment.website}.pdf"
+    )
+    pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), response)
+
+    if not pdf.err:
+        return response
+    else:
+        return HttpResponse("Error Rendering PDF", status=400)

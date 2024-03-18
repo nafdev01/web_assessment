@@ -3,7 +3,11 @@
 {% block title %}Report | {{ assessment }}{% endblock title %}
 
 {% block content %}
-<section class="m-5">
+<div class="d-flex justify-content-end m-2">
+    <a class="btn btn-dark" href="{% url 'view_report_pdf' assessment.id %}">Print Report</a>
+</div>
+
+<section class="mb-5 mx-5">
     <h4 class="card-title mbr-fonts-style mb-0 display-2 text-center">Report</h4>
 
     <div class="d-flex justify-content-center mb-3 p-3">

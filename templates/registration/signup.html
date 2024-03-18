@@ -1,0 +1,52 @@
+<!-- registration/register.html -->
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<section class="container justify-content-center pt-5">
+	<div class="text-center">
+		<h2 class="display-3 text-center">Sign Up</h2>
+		<p>Fill in the form below to create an account.</p>
+	</div>
+	<form id="signupForm" method="post" accept-charset="utf-8" onforminput="checkPasswordMatch()">
+		{% csrf_token %}
+		<div class="row mb-3">
+			<div class="row mb-3">
+				<div class="col">
+					{% bootstrap_field form.first_name layout="inline" %}
+				</div>
+				<div class="col">
+					{% bootstrap_field form.last_name layout="inline" %}
+				</div>
+			</div>
+			<div class="col">
+				{% bootstrap_field form.username layout="inline" %}
+			</div>
+			<div class="col">
+				{% bootstrap_field form.email layout="inline" %}
+			</div>
+			<div class="col">
+				{% bootstrap_field form.phone layout="inline" %}
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col">
+				{% bootstrap_field form.address layout="inline" %}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				{% bootstrap_field form.password1 layout="inline" %}
+			</div>
+			<div class="col">	
+				{% bootstrap_field form.password2 layout="inline" %}
+			</div>
+		</div>
+		<div class="mbr-section-btn my-3 d-flex justify-content-center">
+			<button id="signup-button" class="btn btn-success display-7" type="submit">Sign Up</button>
+		</div>
+	</form>
+</section>
+{% endblock content%}

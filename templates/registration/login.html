@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Log in{% endblock %}
+
+
+{% block content %}
+<section class="d-flex justify-content-center pt-4 row">
+	<div class="col-6">
+		<h2 class="text-center display-4">Log in</h2>
+		<form class="mb-3" method="post">
+			{% csrf_token %}
+			<div class="mb-3">
+				<input type="text" name="username" autofocus autocapitalize="none" autocomplete="username"
+					maxlength="150" class="form-control form-control-sm" placeholder="Username" required
+					id="id_username">
+			</div>
+			<div class="mb-3">
+				<input type="password" name="password" autocomplete="current-password" class="form-control"
+					placeholder="Password" required id="id_password">
+			</div>
+			<div class="mbr-section-btn mt-3 d-flex justify-content-center">
+				<button id="login-button" class="btn btn-success display-7" type="submit">Login</button>
+			</div>
+		</form>
+	</div>
+	<div id="extra-buttons">
+		<a href="{% url 'password_reset' %}">Forgot your password?</a>
+		<br>
+		<a href="{% url 'signup' %}">Register</a>
+	</div>
+</section>
+
+
+
+
+{% endblock content %}

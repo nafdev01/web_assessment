@@ -5,12 +5,10 @@ import subprocess
 from .assess import create_found_vulnerabilities, get_search_output
 
 
-def home(request):
+def assess_site(request):
     if request.method == "POST":
         website = request.POST["url-here"]
 
-        # Run your terminal command here
-        # use this format wapiti -u https://eserver.kabarak.ac.ke -o feed.json --format json
         command = [
             "wapiti",
             "-u",
@@ -58,9 +56,18 @@ def home(request):
 def view_results(request):
     assessments = VulnAssessment.objects.all()
 
-    template_name = "results.html"
+    template_name = "assessment/results.html"
     context = {"assessments": assessments}
     return render(request, template_name, context)
-from django.shortcuts import render
 
-# Create your views here.
+
+def view_report(request, vun_assessment_id):
+    vuln_assessment = VulnAssessment.objects.get(id=vun_assessment_id)
+    found_vulnerabilities = vuln_assessment.foundvulnerability_set.all()
+
+    template_name = "assessment/report.html"
+    context = {
+        "vuln_assessment": vuln_assessment,
+        "found_vulnerabilities": found_vulnerabilities,
+    }
+    return render(request, template_name, context)

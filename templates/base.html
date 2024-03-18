@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="desktop mbr-site-loaded">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style data-merge-styles="true"></style>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:image" content="">
+    <meta name="twitter:title" content="Home">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <link rel="shortcut icon" href="{% static 'assets/logo.png' %}" type="image/x-icon">
+    <meta name="description" content="">
+    <title>{% block title %}Home{% endblock title %}</title>
+    <link rel="stylesheet" href="{% static 'assets/mobirise2.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap-grid.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap-reboot.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/style(1).css' %}">
+    <link rel="stylesheet" href="{% static 'assets/recaptcha.css' %}">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap&display=swap">
+    </noscript>
+    <link rel="preload" as="style" href="{% static 'assets/mbr-additional.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/mbr-additional.css' %}" type="text/css">
+    <script src="chrome-extension://nngceckbapebfimnlniiiahkandclblb/content/fido2/page-script.js"
+        id="bw-fido2-page-script"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'assets/silverBox.css' %}">
+    <script src="{% static 'assets/silverBox.js' %}"></script>
+</head>
+
+<body>
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    <script>
+        var message = "{{ message|safe }}";
+        var alertType = "success";
+
+        silverBox({
+            alertIcon: "success",
+            position: "top-center",
+            text: message,
+            centerContent: true,
+            cancelButton: {
+                text: "OK",
+            }
+        })
+    </script>
+    {% elif message.tags == 'info' %}
+    <script>
+        var message = "{{ message|safe }}";
+        var alertType = "info";
+
+        silverBox({
+            alertIcon: alertType,
+            position: "top-center",
+            text: message,
+            centerContent: true,
+            cancelButton: {
+                text: "OK"
+            }
+        })
+    </script>
+
+    {% elif message.tags == 'warning' %}
+    <script>
+        var message = "{{ message|safe }}";
+        var alertType = "warning";
+
+        silverBox({
+            alertIcon: alertType,
+            position: "top-center",
+            text: message,
+            centerContent: true,
+            cancelButton: {
+                text: "Close"
+            }
+        })
+    </script>
+
+    {% elif message.tags == 'error' %}
+    <script>
+        var message = "{{ message|safe }}";
+        var alertType = "error";
+
+        silverBox({
+            alertIcon: alertType,
+            position: "top-center",
+            text: message,
+            centerContent: true,
+            cancelButton: {
+                text: "Close"
+            }
+        })
+    </script>
+
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <section data-bs-version="5.1" class="menu menu1 structurem5 cid-tmYQJSEkuS" once="menu" id="amenu1-0">
+        <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
+            <div class="container-fluid">
+                <div class="main-container">
+                    <div class="navbar-brand">
+                        <span class="navbar-logo">
+                            <a href="{% url 'home' %}">
+                                <img src="{% static 'assets/logo.png' %}" alt="Web Assessment Platform"
+                                    style="height: 3rem;">
+                            </a>
+                        </span>
+                        <span class="navbar-caption-wrap">
+                            <a class="navbar-caption text-white display-7" href="{% url 'home' %}">
+                                Web Assessment
+                            </a>
+                        </span>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true">
+                            <li class="nav-item">
+                                <a class="nav-link link text-white display-7" href="{% url 'home' %}">
+                                    Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link text-white display-7" href="{% url 'home' %}#services">
+                                    Services
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link text-white display-7" href="{% url 'home' %}#contact">
+                                    Contact
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {% if not user.is_authenticated %}
+                    <div class="navbar-buttons mbr-section-btn me-2">
+                        <a class="btn btn-white display-8" href="{% url 'login' %}">
+                            Login
+                        </a>
+                        <a class="btn btn-white display-8" href="{% url 'signup' %}">
+                            Register
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="navbar-buttons mbr-section-btn me-2">
+                        <a class="btn btn-white display-8" href="#">
+                            Assess
+                        </a>
+                        <a class="btn btn-danger display-8" href="{% url 'log_out' %}">
+                            Logout
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse"
+                        data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                        <div class="hamburger">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </section>
+
+    {% block content %}
+
+    {% endblock content %}
+
+    <section data-bs-version="5.1" class="footer2 structurem5 cid-tmYV2YWTCM" once="footers" id="afooter2-9">
+        <div class="section-border-item section-border-item_top"></div>
+        <div class="container-fluid">
+            <div class="media-container-row align-center mbr-white">
+                <div class="col-12">
+                    <p class="mbr-text mb-0 mbr-fonts-style align-center display-7">
+                        ©Copyright 2024 Web Assessment - All Rights Reserved
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'assets/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/smooth-scroll.js' %}"></script>
+    <script src="{% static 'assets/index.js' %}"></script>
+    <script src="{% static 'assets/navbar-dropdown.js' %}"></script>
+    <script src="{% static 'assets/vimeo_player.js' %}"></script>
+    <script src="{% static 'assets/script.js' %}"></script>
+    <script src="{% static 'assets/formoid.min.js' %}"></script>
+</body>
+
+</html>

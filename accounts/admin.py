@@ -11,7 +11,6 @@ class ClientAdmin(UserAdmin):
         "first_name",
         "last_name",
         "phone",
-        "date_of_birth",
     )
     search_fields = (
         "username",
@@ -20,6 +19,5 @@ class ClientAdmin(UserAdmin):
         "email",
         "phone",
         "address",
-        "date_of_birth",
     )
     ordering = ("username",)

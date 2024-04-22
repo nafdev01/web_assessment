@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     "assessment",
     "django_bootstrap5",
     "django_extensions",
+    # 3rd party
+    "whitenoise.runserver_nostatic",
     # default apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -68,6 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "django_project.wsgi.application"
 
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -116,9 +120,8 @@ USE_TZ = True
 
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-
 
 # media files
 MEDIA_URL = "/media/"

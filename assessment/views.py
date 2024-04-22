@@ -29,6 +29,8 @@ def assess_site(request):
             "--format",
             "json",
             "--flush-session",
+            "-m",
+            "backup,cookieflags,crlf,csp,csrf,htaccess,http_headers,methods,nikto,redirect,xss,xxe",
         ]
 
         result = subprocess.run(command, capture_output=True, text=True)

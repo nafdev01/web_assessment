@@ -7,3 +7,5 @@ __pycache__
 warning.log
 
 *.backup
+
+feed.json

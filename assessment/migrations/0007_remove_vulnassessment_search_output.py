@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0006_foundvulnerability_classification'),
+        ("assessment", "0006_foundvulnerability_classification"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='vulnassessment',
-            name='search_output',
+            model_name="vulnassessment",
+            name="search_output",
         ),
     ]

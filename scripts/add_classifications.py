@@ -1,5 +1,6 @@
-from assessment.models import Classification, ClassificationReference
 import json
+
+from assessment.models import Classification, ClassificationReference
 
 
 def run():

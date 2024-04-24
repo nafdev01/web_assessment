@@ -1,4 +1,3 @@
-import subprocess
 from io import BytesIO
 
 from django.contrib import messages
@@ -9,58 +8,45 @@ from django.template.loader import get_template, render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from xhtml2pdf import pisa
 
-from .assess import create_found_vulnerabilities, get_search_output
+from .forms import AssessmentForm
 from .models import VulnAssessment
+from .tasks import conduct_assessment
 
 
 @login_required
 def assess_site(request):
     if request.method == "POST":
-        website = request.POST["url-here"]
+        form = AssessmentForm(data=request.POST)
 
-        command = [
-            "wapiti",
-            "-u",
-            f"{website}",
-            "-o",
-            "feed.json",
-            "--format",
-            "json",
-            "--format",
-            "json",
-            "--flush-session",
-            "-m",
-            "backup,cookieflags,crlf,csp,csrf,htaccess,http_headers,methods,nikto,redirect,xss,xxe",
-        ]
+        if form.is_valid():
+            website = form.cleaned_data["url_here"]
+            vuln_assessment = VulnAssessment.objects.create(
+                client=request.user, website=website
+            )
 
-        result = subprocess.run(command, capture_output=True, text=True)
+            detail_url = request.build_absolute_uri(vuln_assessment.get_absolute_url())
 
-        # Check if the command was successful
-        if result.returncode == 0:
-            search_output = result.stdout
+            conduct_assessment.delay(detail_url, vuln_assessment.id)
+            return redirect("results_pending", assessment_id=vuln_assessment.id)
         else:
-            search_output = "Command failed"
-            messages.error(request, f"Command failed with error: {result.stderr}")
-            return redirect("home")
-
-        vulnerabilities = get_search_output("feed.json")
-
-        # delete the feed file
-        subprocess.run(["rm", "feed.json"])
-
-        vuln_assessment = VulnAssessment(client=request.user, website=website)
-        vuln_assessment.save()
-
-        create_found_vulnerabilities(vuln_assessment, vulnerabilities)
-
-        messages.success(
-            request,
-            f"Your vulnerablity assessment for {website} was successful! {len(vulnerabilities)} vulnerabilities found.",
-        )
-        return redirect("view_report", vuln_assessment_id=vuln_assessment.id)
+            messages.error(request, f"Form is invalid")
+            return redirect("assess_site")
 
     template_name = "assessment/assess_site.html"
     context = {}
+    return render(request, template_name, context)
+
+
+@login_required
+def results_pending(request, assessment_id):
+    assessment = VulnAssessment.objects.get(id=assessment_id)
+
+    if assessment.ready:
+        messages.info(request, "Assessment is ready, these are the results")
+        return redirect(assessment.get_absolute_url())
+
+    template_name = "assessment/results_pending.html"
+    context = {"assessment": assessment}
     return render(request, template_name, context)
 
 
@@ -76,6 +62,13 @@ def view_results(request):
 @login_required
 def view_report(request, vuln_assessment_id):
     vuln_assessment = VulnAssessment.objects.get(id=vuln_assessment_id)
+
+    if not vuln_assessment.ready:
+        messages.warning(
+            request,
+            "Assessment report is not ready yet, please wait",
+        )
+        return redirect("results_pending", assessment_id=vuln_assessment.id)
 
     template_name = "assessment/report.html"
     context = {"assessment": vuln_assessment}

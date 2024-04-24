@@ -3,3 +3,7 @@
 __pycache__
 # datase files
 *.sqlite3
+
+warning.log
+
+*.backup

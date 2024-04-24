@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ assessment.client.get_full_name }} - Assessment Report</title>
+    <style>
+        .text-center {
+            text-align: center;
+        }
+
+        .card {
+            width: 80%;
+            border: 1px solid #000;
+            border-radius: 10px;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        ul ol {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="m-5">
+        <h2 class="text-center">Assesment Report</h2>
+
+        <div class="mb-3 p-3">
+            <p>We found the following vulnerabilities on {{ assessment.website }}:</p>
+
+            <div class="card">
+                <div class="card-body">
+                    <ol>
+                        {% for vulnerability in assessment.vulnerabilities.all %}
+                        <li>
+                            <p>{{ vulnerability.vulnerability_type }}: {{ vulnerability.info }}</p>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+
+            <div>
+                <p>For information detail on the vulnerabilities found and recommendations on how to fix them, please
+                    visit the <a href="{{ detail_url }}" target="_blank">full report</a> on our website.
+                </p>
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>

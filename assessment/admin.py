@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from .models import FoundVulnerability, VulnAssessment, Classification, ClassificationReference
+from .models import (
+    Classification,
+    ClassificationReference,
+    FoundVulnerability,
+    VulnAssessment,
+)
 
 
 @admin.register(VulnAssessment)

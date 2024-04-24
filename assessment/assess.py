@@ -1,5 +1,13 @@
 import json
-from .models import VulnAssessment, FoundVulnerability, Classification
+import logging
+
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.template.loader import get_template
+
+from .models import Classification, FoundVulnerability
+
+logger = logging.getLogger(__name__)
 
 
 def get_search_output(input_file):
@@ -47,3 +55,39 @@ def create_found_vulnerabilities(assessment, vulnerabilities):
             print(f"No Classification found for name {classification_name}")
         except Exception as e:
             print(f"Error linking classification to found vulnerability: {e}")
+
+
+# def dummy_conduct_assessment(sender_email):
+#     try:
+#         send_feedback_email_task.delay(sender_email)
+#         return True
+#     except Exception as e:
+#         # Log the error or handle it in a way appropriate for your application
+#         print(f"An error occurred while sending the assessment email: {e}")
+#         return False
+
+
+def send_successful_assessment_email(detail_url, vuln_assessment):
+
+    # Retrieve entry by id
+    subject = f"Assessment of Site {vuln_assessment.website} Completed!"
+    sender = settings.EMAIL_HOST_USER
+    recipient = f"{vuln_assessment.client.email}"
+    message = get_template("assessment/assessment_email_template.html").render(
+        {
+            "detail_url": detail_url,
+            "assessment": vuln_assessment,
+        }
+    )
+    mail = EmailMessage(
+        subject=subject,
+        body=message,
+        from_email=sender,
+        to=[recipient],
+        reply_to=[sender],
+    )
+    mail.content_subtype = "html"
+    if mail.send():
+        return True
+    else:
+        return False

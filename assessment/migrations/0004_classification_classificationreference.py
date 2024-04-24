@@ -7,36 +7,59 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0003_alter_foundvulnerability_vuln_assessment_and_more'),
+        ("assessment", "0003_alter_foundvulnerability_vuln_assessment_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Classification',
+            name="Classification",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField()),
-                ('solution', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("description", models.TextField()),
+                ("solution", models.TextField()),
             ],
             options={
-                'verbose_name': 'Classification',
-                'verbose_name_plural': 'Classifications',
-                'ordering': ['name'],
+                "verbose_name": "Classification",
+                "verbose_name_plural": "Classifications",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='ClassificationReference',
+            name="ClassificationReference",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('reference_link', models.URLField()),
-                ('classification', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='references', to='assessment.classification')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("reference_link", models.URLField()),
+                (
+                    "classification",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="references",
+                        to="assessment.classification",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Classification Reference',
-                'verbose_name_plural': 'Classification References',
-                'ordering': ['name'],
+                "verbose_name": "Classification Reference",
+                "verbose_name_plural": "Classification References",
+                "ordering": ["name"],
             },
         ),
     ]

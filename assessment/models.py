@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 
@@ -10,10 +11,14 @@ class VulnAssessment(models.Model):
         related_name="vuln_assessments",
     )
     website = models.CharField(max_length=100)
+    ready = models.BooleanField(default=False)
     tested_on = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.website
+
+    def get_absolute_url(self):
+        return reverse("view_report", kwargs={"vuln_assessment_id": self.id})
 
     class Meta:
         verbose_name = "Assessment"

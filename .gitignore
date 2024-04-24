@@ -9,3 +9,5 @@ warning.log
 *.backup
 
 feed.json
+
+*.rdb

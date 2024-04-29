@@ -1,0 +1,37 @@
+ 
+ -------------- celery@custos v5.4.0 (opalescent)
+--- ***** ----- 
+-- ******* ---- Linux-6.6.15-amd64-x86_64-with-glibc2.37 2024-04-25 15:32:01
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         django_project:0x7fa030d6afd0
+- ** ---------- .> transport:   redis://localhost:6379//
+- ** ---------- .> results:     redis://localhost:6379/
+- *** --- * --- .> concurrency: 4 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . assessment.tasks.conduct_assessment
+
+[2024-04-25 15:32:01,785: WARNING/MainProcess] /home/priest/PyProjects/web_assessment/.venv/lib/python3.11/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2024-04-25 15:32:01,793: INFO/MainProcess] Connected to redis://localhost:6379//
+[2024-04-25 15:32:01,794: WARNING/MainProcess] /home/priest/PyProjects/web_assessment/.venv/lib/python3.11/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2024-04-25 15:32:01,797: INFO/MainProcess] mingle: searching for neighbors
+[2024-04-25 15:32:02,808: INFO/MainProcess] mingle: all alone
+[2024-04-25 15:32:02,855: INFO/MainProcess] celery@custos ready.
+
+worker: Warm shutdown (MainProcess)

@@ -1,0 +1,14 @@
+black==24.4.0
+celery==5.4.0
+dj-database-url==2.1.0
+Django==5.0.4
+django-bootstrap5==24.1
+django-extensions==3.2.3
+ipython==8.23.0
+Markdown==3.6
+pillow==10.3.0
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+redis==5.0.4
+whitenoise==6.6.0
+xhtml2pdf==0.2.15

@@ -53,7 +53,7 @@ class FoundVulnerability(models.Model):
 
 
 class Classification(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=500, unique=True)
     description = models.TextField()
     solution = models.TextField()
 

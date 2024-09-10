@@ -70,7 +70,7 @@ class ClassificationReference(models.Model):
     classification = models.ForeignKey(
         Classification, on_delete=models.CASCADE, related_name="references"
     )
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=500)
     reference_link = models.URLField()
 
     def __str__(self):

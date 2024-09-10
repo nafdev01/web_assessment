@@ -11,3 +11,7 @@ warning.log
 feed.json
 
 *.rdb
+# Ignore Django migration files
+*/migrations/
+*/migrations/*.py
+*/migrations/*.pyc

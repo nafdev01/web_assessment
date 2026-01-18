@@ -143,6 +143,147 @@
         });
     </script>
 
+    <!-- Global Notification Toast Container -->
+    <div id="notificationToastContainer" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;"></div>
+
+    <!-- Global Notifications WebSocket -->
+    {% if user.is_authenticated %}
+    <script>
+        (function() {
+            let notificationWs = null;
+            
+            function connectNotificationWebSocket() {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/ws/notifications/`;
+                
+                console.log('[Notifications] Connecting to:', wsUrl);
+                
+                notificationWs = new WebSocket(wsUrl);
+                
+                notificationWs.onopen = () => {
+                    console.log('[Notifications] ✓ WebSocket connected');
+                };
+                
+                notificationWs.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'notification') {
+                        showNotificationToast(data.notification);
+                    }
+                };
+                
+                notificationWs.onerror = (error) => {
+                    console.error('[Notifications] WebSocket error:', error);
+                };
+                
+                notificationWs.onclose = () => {
+                    console.log('[Notifications] WebSocket closed, reconnecting in 5s...');
+                    setTimeout(connectNotificationWebSocket, 5000);
+                };
+            }
+            
+            function showNotificationToast(notification) {
+                const container = document.getElementById('notificationToastContainer');
+                
+                const toast = document.createElement('div');
+                toast.className = 'notification-toast notification-' + (notification.type || 'info');
+                toast.style.cssText = `
+                    background: rgba(0, 0, 0, 0.95);
+                    border: 1px solid var(--border-tech);
+                    border-left: 4px solid ${getNotificationColor(notification.type)};
+                    padding: 16px;
+                    margin-bottom: 12px;
+                    font-family: var(--font-hud);
+                    font-size: 12px;
+                    animation: slideInRight 0.3s ease;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+                `;
+                
+                const title = document.createElement('div');
+                title.style.cssText = `
+                    color: ${getNotificationColor(notification.type)};
+                    font-weight: 600;
+                    margin-bottom: 4px;
+                `;
+                title.textContent = notification.title || 'Notification';
+                
+                const message = document.createElement('div');
+                message.style.cssText = `
+                    color: var(--text-dim);
+                    line-height: 1.4;
+                `;
+                message.textContent = notification.message;
+                
+                toast.appendChild(title);
+                toast.appendChild(message);
+                
+                // Click to dismiss or navigate
+                toast.addEventListener('click', () => {
+                    if (notification.url) {
+                        window.location.href = notification.url;
+                    } else {
+                        toast.remove();
+                    }
+                });
+                
+                container.appendChild(toast);
+                
+                // Auto-dismiss after 8 seconds
+                setTimeout(() => {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 8000);
+            }
+            
+            function getNotificationColor(type) {
+                switch(type) {
+                    case 'success': return 'var(--neon-green)';
+                    case 'error': return '#ff3366';
+                    case 'warning': return 'var(--neon-yellow)';
+                    case 'info':
+                    default: return 'var(--neon-cyan)';
+                }
+            }
+            
+            // Add animations
+            const animStyle = document.createElement('style');
+            animStyle.textContent = `
+                @keyframes slideInRight {
+                    from {
+                        opacity: 0;
+                        transform: translateX(100%);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                @keyframes slideOutRight {
+                    from {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: translateX(100%);
+                    }
+                }
+                
+                .notification-toast:hover {
+                    border-color: var(--neon-cyan);
+                    box-shadow: 0 4px 16px rgba(0, 255, 255, 0.3);
+                }
+            `;
+            document.head.appendChild(animStyle);
+            
+            // Connect when page loads
+            document.addEventListener('DOMContentLoaded', connectNotificationWebSocket);
+        })();
+    </script>
+    {% endif %}
+
     {% block extra_scripts %}{% endblock extra_scripts %}
 </body>
 </html>

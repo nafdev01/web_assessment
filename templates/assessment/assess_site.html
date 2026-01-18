@@ -8,10 +8,10 @@
     <section class="scan-section">
         <div class="section-header">
             <h2 class="section-title">Initialize_Assessment</h2>
-            <span class="section-badge">Ready</span>
+            <span class="section-badge" id="statusBadge">Ready</span>
         </div>
 
-        <form action="" method="post">
+        <form id="assessmentForm" method="post">
             {% csrf_token %}
             <div class="input-group">
                 <div class="input-wrapper">
@@ -32,7 +32,43 @@
             </div>
         </form>
 
-        <div style="margin-top: 32px; padding: 20px; background: var(--bg-void); border: 1px solid var(--border-tech);">
+        <!-- Terminal Console Display -->
+        <div id="terminalDisplay" style="display: none; margin-top: 32px;">
+            <div class="terminal-header">
+                <div class="terminal-title">
+                    <span style="color: var(--neon-green);">[LIVE]</span>
+                    <span id="terminalTarget"></span>
+                </div>
+                <div class="terminal-status">
+                    <span id="terminalStatusBadge" class="terminal-badge">SCANNING</span>
+                </div>
+            </div>
+            
+            <div class="terminal-progress">
+                <div class="progress-info">
+                    <span id="terminalStatusText">Initializing...</span>
+                    <span id="terminalPercent">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="terminalProgressBar" class="progress-bar-fill"></div>
+                </div>
+            </div>
+
+            <div class="terminal-console" id="terminalConsole">
+                <div class="console-line">
+                    <span class="console-prompt">root@wvat:~$</span>
+                    <span class="console-text">Initializing vulnerability assessment...</span>
+                </div>
+            </div>
+
+            <div id="terminalComplete" class="terminal-complete" style="display: none;">
+                <span style="color: var(--neon-green);">[✓ COMPLETE]</span>
+                Assessment finished successfully!
+                <a href="#" id="terminalReportLink" class="terminal-link">View Report →</a>
+            </div>
+        </div>
+
+        <div id="infoBox" style="margin-top: 32px; padding: 20px; background: var(--bg-void); border: 1px solid var(--border-tech);">
             <p style="font-family: var(--font-hud); font-size: 12px; color: var(--text-dim); line-height: 1.6;">
                 <span style="color: var(--neon-cyan);">[INFO]</span> Assessment will scan for 180+ vulnerability types including SQL Injection, XSS, CSRF, and more.
                 <br>
@@ -62,7 +98,7 @@
             <div class="feature-icon">[02]</div>
             <h3 class="feature-title">Scan_Execution</h3>
             <p class="feature-description">
-                Wapiti engine performs comprehensive testing for common vulnerabilities. This process runs in the background and takes 15-20 minutes.
+                Nuclei engine performs comprehensive testing for common vulnerabilities. This process runs in the background and takes 15-20 minutes.
             </p>
         </div>
 
@@ -75,4 +111,352 @@
         </div>
     </div>
 </div>
+
+<style>
+/* Terminal Console Styles */
+.terminal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-tech);
+    border-bottom: none;
+}
+
+.terminal-title {
+    font-family: var(--font-hud);
+    font-size: 12px;
+    color: var(--neon-cyan);
+}
+
+.terminal-badge {
+    font-family: var(--font-hud);
+    font-size: 10px;
+    padding: 4px 8px;
+    border: 1px solid var(--neon-yellow);
+    color: var(--neon-yellow);
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.terminal-badge.complete {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    background: rgba(0, 255, 159, 0.1);
+}
+
+.terminal-progress {
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-tech);
+    border-bottom: none;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-family: var(--font-hud);
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-void);
+    border: 1px solid var(--border-tech);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    transition: width 0.3s ease;
+}
+
+.terminal-console {
+    background: #000;
+    border: 1px solid var(--border-tech);
+    padding: 16px;
+    max-height: 400px;
+    min-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    word-wrap: break-word;
+}
+
+.terminal-console::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminal-console::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.terminal-console::-webkit-scrollbar-thumb {
+    background: var(--border-tech);
+}
+
+.terminal-console::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-cyan);
+}
+
+.console-line {
+    margin-bottom: 4px;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-2px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.console-prompt {
+    color: var(--neon-green);
+    margin-right: 8px;
+}
+
+.console-text {
+    color: var(--text-dim);
+}
+
+.console-text.info {
+    color: var(--neon-cyan);
+}
+
+.console-text.success {
+    color: var(--neon-green);
+}
+
+.console-text.warning {
+    color: var(--neon-yellow);
+}
+
+.console-text.error {
+    color: #ff3366;
+}
+
+.terminal-complete {
+    padding: 16px;
+    background: rgba(0, 255, 159, 0.1);
+    border: 1px solid var(--neon-green);
+    border-top: none;
+    font-family: var(--font-hud);
+    font-size: 12px;
+    color: var(--neon-green);
+    text-align: center;
+}
+
+.terminal-link {
+    color: var(--neon-cyan);
+    text-decoration: underline;
+    margin-left: 8px;
+}
+
+.terminal-link:hover {
+    color: var(--neon-green);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('assessmentForm');
+    const scanBtn = document.getElementById('scanBtn');
+    const terminalDisplay = document.getElementById('terminalDisplay');
+    const infoBox = document.getElementById('infoBox');
+    const statusBadge = document.getElementById('statusBadge');
+    const terminalTarget = document.getElementById('terminalTarget');
+    const terminalStatusText = document.getElementById('terminalStatusText');
+    const terminalPercent = document.getElementById('terminalPercent');
+    const terminalProgressBar = document.getElementById('terminalProgressBar');
+    const terminalConsole = document.getElementById('terminalConsole');
+    const terminalComplete = document.getElementById('terminalComplete');
+    const terminalReportLink = document.getElementById('terminalReportLink');
+    const terminalStatusBadge = document.getElementById('terminalStatusBadge');
+    
+    let ws = null;
+    let assessmentId = null;
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const url = form.querySelector('input[name="url_here"]').value;
+        
+        // Disable form
+        scanBtn.disabled = true;
+        scanBtn.textContent = 'SCANNING...';
+        
+        // Show terminal display
+        terminalDisplay.style.display = 'block';
+        infoBox.style.display = 'none';
+        terminalTarget.textContent = url;
+        statusBadge.textContent = 'Scanning';
+        statusBadge.style.background = 'var(--neon-yellow)';
+        
+        // Clear console
+        terminalConsole.innerHTML = '';
+        addConsoleLine('Submitting assessment request...');
+        
+        // Submit via AJAX
+        fetch(form.action || window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                assessmentId = data.assessment_id;
+                addConsoleLine('Assessment created: ' + assessmentId, 'success');
+                addConsoleLine('Connecting to real-time feed...', 'info');
+                
+                // Connect to WebSocket
+                connectWebSocket(assessmentId);
+            } else {
+                addConsoleLine('Error: ' + JSON.stringify(data.errors), 'error');
+                resetForm();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            addConsoleLine('Connection error: ' + error.message, 'error');
+            resetForm();
+        });
+    });
+
+    function connectWebSocket(id) {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/assessment/${id}/`;
+        
+        addConsoleLine('Connecting to: ' + wsUrl, 'info');
+        
+        ws = new WebSocket(wsUrl);
+        
+        ws.onopen = () => {
+            addConsoleLine('[WebSocket] Connected successfully', 'success');
+        };
+        
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            handleWebSocketMessage(data);
+        };
+        
+        ws.onerror = (error) => {
+            addConsoleLine('[WebSocket] Error occurred', 'error');
+            console.error('WebSocket error:', error);
+        };
+        
+        ws.onclose = () => {
+            addConsoleLine('[WebSocket] Connection closed', 'warning');
+        };
+    }
+
+    function handleWebSocketMessage(data) {
+        switch(data.type) {
+            case 'status':
+                addConsoleLine('[STATUS] Assessment status received', 'info');
+                if (data.status) {
+                    addConsoleLine(`Ready: ${data.status.ready}`, 'info');
+                }
+                break;
+                
+            case 'progress':
+                updateProgress(data.progress);
+                break;
+                
+            case 'update':
+                // Real-time console output from Nuclei
+                if (data.update && data.update.line) {
+                    addConsoleLine(data.update.line);
+                }
+                break;
+                
+            case 'complete':
+                handleCompletion(data.data);
+                break;
+                
+            case 'pong':
+                // Heartbeat response
+                break;
+        }
+    }
+
+    function updateProgress(progress) {
+        if (progress.percentage !== undefined) {
+            terminalProgressBar.style.width = progress.percentage + '%';
+            terminalPercent.textContent = progress.percentage + '%';
+        }
+        if (progress.message) {
+            terminalStatusText.textContent = progress.message;
+            addConsoleLine('[PROGRESS] ' + progress.message, 'info');
+        }
+    }
+
+    function handleCompletion(data) {
+        terminalProgressBar.style.width = '100%';
+        terminalPercent.textContent = '100%';
+        terminalStatusText.textContent = 'Complete!';
+        terminalStatusBadge.textContent = 'COMPLETE';
+        terminalStatusBadge.classList.add('complete');
+        statusBadge.textContent = 'Complete';
+        statusBadge.style.background = 'var(--neon-green)';
+        
+        addConsoleLine('', '');
+        addConsoleLine('═══════════════════════════════════════', 'success');
+        addConsoleLine('[✓] Assessment completed successfully!', 'success');
+        addConsoleLine(`Found ${data.vulnerabilities_count || 0} vulnerabilities`, 'info');
+        addConsoleLine('═══════════════════════════════════════', 'success');
+        
+        terminalComplete.style.display = 'block';
+        terminalReportLink.href = data.report_url;
+        
+        if (ws) {
+            ws.close();
+        }
+    }
+
+    function addConsoleLine(text, type = '') {
+        const line = document.createElement('div');
+        line.className = 'console-line';
+        
+        const prompt = document.createElement('span');
+        prompt.className = 'console-prompt';
+        prompt.textContent = '>';
+        
+        const textSpan = document.createElement('span');
+        textSpan.className = 'console-text' + (type ? ' ' + type : '');
+        textSpan.textContent = text;
+        
+        line.appendChild(prompt);
+        line.appendChild(textSpan);
+        terminalConsole.appendChild(line);
+        
+        // Auto-scroll to bottom
+        terminalConsole.scrollTop = terminalConsole.scrollHeight;
+    }
+
+    function resetForm() {
+        scanBtn.disabled = false;
+        scanBtn.textContent = 'RUN_SCAN';
+        terminalDisplay.style.display = 'none';
+        infoBox.style.display = 'block';
+        statusBadge.textContent = 'Ready';
+        statusBadge.style.background = '';
+        
+        if (ws) {
+            ws.close();
+            ws = null;
+        }
+    }
+});
+</script>
 {% endblock content %}

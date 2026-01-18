@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}>_ WVAT // Assessment History{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2 class="page-title">Assessment_History</h2>
+        <p class="page-subtitle">View all your vulnerability assessments</p>
+    </div>
+
+    {% if assessments %}
+        <div class="assessments-grid">
+            {% for assessment in assessments %}
+            <div class="assessment-card {% if assessment.ready %}ready{% else %}pending{% endif %}">
+                <div class="assessment-header">
+                    <div class="assessment-info">
+                        <h3 class="assessment-website">{{ assessment.website }}</h3>
+                        <span class="assessment-date">
+                            {{ assessment.tested_on|date:"M d, Y - H:i" }}
+                        </span>
+                    </div>
+                    <div class="assessment-status">
+                        {% if assessment.ready %}
+                            <span class="status-badge status-ready">
+                                <span class="status-icon">✓</span>
+                                READY
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-pending">
+                                <span class="status-icon">⏳</span>
+                                SCANNING
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="assessment-actions">
+                    {% if assessment.ready %}
+                        <a href="{% url 'view_report' assessment.id %}" class="btn-primary">
+                            VIEW_REPORT
+                        </a>
+                    {% else %}
+                        <button class="btn-secondary" disabled>
+                            PROCESSING
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination (if needed in future) -->
+        <div class="pagination-info">
+            <p style="font-family: var(--font-hud); font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 32px;">
+                <span style="color: var(--neon-cyan);">[INFO]</span> Showing {{ assessments.count }} assessment{{ assessments.count|pluralize }}
+            </p>
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <h3 class="empty-title">No_Assessments_Found</h3>
+            <p class="empty-message">
+                You haven't run any vulnerability assessments yet.
+                <br>
+                Start your first scan to see results here.
+            </p>
+            <a href="{% url 'assess_site' %}" class="btn-execute" style="margin-top: 24px;">
+                START_ASSESSMENT
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.assessments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.assessment-card {
+    background: var(--bg-void);
+    border: 1px solid var(--border-tech);
+    padding: 24px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.assessment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--border-tech);
+    transition: all 0.3s ease;
+}
+
+.assessment-card.ready::before {
+    background: var(--neon-green);
+}
+
+.assessment-card.pending::before {
+    background: var(--neon-yellow);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.assessment-card:hover {
+    border-color: var(--neon-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 255, 255, 0.1);
+}
+
+.assessment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+
+.assessment-info {
+    flex: 1;
+}
+
+.assessment-website {
+    font-family: var(--font-hud);
+    font-size: 18px;
+    color: var(--neon-cyan);
+    margin: 0 0 8px 0;
+    word-break: break-all;
+}
+
+.assessment-date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.assessment-status {
+    flex-shrink: 0;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-family: var(--font-hud);
+    font-size: 10px;
+    font-weight: 600;
+    border: 1px solid;
+    white-space: nowrap;
+}
+
+.status-ready {
+    color: var(--neon-green);
+    border-color: var(--neon-green);
+    background: rgba(0, 255, 159, 0.1);
+}
+
+.status-pending {
+    color: var(--neon-yellow);
+    border-color: var(--neon-yellow);
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.status-icon {
+    font-size: 12px;
+}
+
+.assessment-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-family: var(--font-hud);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--neon-cyan);
+    color: var(--bg-void);
+    border-color: var(--neon-cyan);
+}
+
+.btn-primary:hover {
+    background: transparent;
+    color: var(--neon-cyan);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-dim);
+    border-color: var(--border-tech);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.empty-title {
+    font-family: var(--font-hud);
+    font-size: 24px;
+    color: var(--neon-cyan);
+    margin: 0 0 16px 0;
+}
+
+.empty-message {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .assessments-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .assessment-header {
+        flex-direction: column;
+    }
+    
+    .assessment-status {
+        align-self: flex-start;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh pending assessments every 10 seconds
+    const hasPending = document.querySelector('.status-pending');
+    
+    if (hasPending) {
+        setInterval(() => {
+            // Reload page to check for updates
+            window.location.reload();
+        }, 10000); // 10 seconds
+    }
+});
+</script>
+{% endblock content %}

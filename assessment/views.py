@@ -5,10 +5,11 @@ from PyPDF2 import PdfReader, PdfWriter
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import get_template, render_to_string
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 from xhtml2pdf import pisa
 
 from .forms import AssessmentForm
@@ -39,11 +40,32 @@ def assess_site(request):
                 f"Created assessment {vuln_assessment.id} for {website}, triggering Celery task"
             )
             conduct_assessment.delay(detail_url, vuln_assessment.id)
-            return redirect("results_pending", assessment_id=vuln_assessment.id)
+
+            # Check if AJAX request
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "assessment_id": vuln_assessment.id,
+                        "website": website,
+                        "status_url": request.build_absolute_uri(
+                            reverse("assessment_status", args=[vuln_assessment.id])
+                        ),
+                    }
+                )
+
+            return redirect("view_results")
         else:
             logger.warning(
                 f"Invalid assessment form submission by {request.user.username}: {form.errors}"
             )
+
+            # Check if AJAX request
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse(
+                    {"success": False, "errors": form.errors}, status=400
+                )
+
             messages.error(request, f"Form is invalid")
             return redirect("assess_site")
 
@@ -53,29 +75,10 @@ def assess_site(request):
 
 
 @login_required
-def results_pending(request, assessment_id):
-    try:
-        assessment = VulnAssessment.objects.get(id=assessment_id)
-    except VulnAssessment.DoesNotExist:
-        logger.error(
-            f"User {request.user.username} attempted to access non-existent assessment {assessment_id}"
-        )
-        messages.error(request, "Assessment not found")
-        return redirect("view_results")
-
-    if assessment.ready:
-        logger.info(f"Assessment {assessment_id} is ready, redirecting to results")
-        messages.info(request, "Assessment is ready, these are the results")
-        return redirect(assessment.get_absolute_url())
-
-    template_name = "assessment/results_pending.html"
-    context = {"assessment": assessment}
-    return render(request, template_name, context)
-
-
-@login_required
 def view_results(request):
-    assessments = VulnAssessment.objects.all()
+    assessments = VulnAssessment.objects.filter(client=request.user).order_by(
+        "-tested_on"
+    )
     logger.info(
         f"User {request.user.username} viewing results page with {assessments.count()} assessments"
     )
@@ -104,7 +107,7 @@ def view_report(request, vuln_assessment_id):
             request,
             "Assessment report is not ready yet, please wait",
         )
-        return redirect("results_pending", assessment_id=vuln_assessment.id)
+        return redirect("view_results")
 
     logger.info(
         f"User {request.user.username} viewing report for assessment {vuln_assessment_id}"
@@ -385,3 +388,30 @@ def view_report_pdf(request, vuln_assessment_id):
         f"Successfully generated and encrypted PDF for assessment {vuln_assessment_id}"
     )
     return response
+
+
+@login_required
+def assessment_status(request, assessment_id):
+    """API endpoint to check assessment status via AJAX"""
+    try:
+        assessment = VulnAssessment.objects.get(id=assessment_id, client=request.user)
+        return JsonResponse(
+            {
+                "success": True,
+                "assessment_id": assessment.id,
+                "website": assessment.website,
+                "ready": assessment.ready,
+                "tested_on": (
+                    assessment.tested_on.isoformat() if assessment.tested_on else None
+                ),
+                "report_url": (
+                    request.build_absolute_uri(assessment.get_absolute_url())
+                    if assessment.ready
+                    else None
+                ),
+            }
+        )
+    except VulnAssessment.DoesNotExist:
+        return JsonResponse(
+            {"success": False, "error": "Assessment not found"}, status=404
+        )

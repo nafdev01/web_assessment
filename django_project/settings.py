@@ -30,7 +30,9 @@ INSTALLED_APPS = [
     "assessment",
     "notifications",
     "django_extensions",
+    "daphne",
     # 3rd party
+    "channels",
     "whitenoise.runserver_nostatic",
     # default apps
     "django.contrib.admin",
@@ -70,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "django_project.wsgi.application"
+ASGI_APPLICATION = "django_project.wsgi.application"
 
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
@@ -271,3 +273,16 @@ SITE_URL = os.getenv("SITE_URL")
 
 if not SITE_URL:
     raise ValueError("SITE_URL environment variable is not set")
+
+# ASGI Configuration for Channels
+ASGI_APPLICATION = "django_project.asgi.application"
+
+# Channel Layers Configuration
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}

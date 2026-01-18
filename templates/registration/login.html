@@ -21,12 +21,12 @@
             {% endif %}
 
             <div class="input-wrapper">
-                <label class="input-label">Username</label>
+                <label class="input-label">Username or Email</label>
                 <input
                     type="text"
                     name="username"
                     class="form-control"
-                    placeholder="Enter username"
+                    placeholder="Enter username or email"
                     autofocus
                     autocapitalize="none"
                     autocomplete="off"
@@ -54,9 +54,6 @@
                     <a href="{% url 'password_reset' %}" style="font-family: var(--font-hud); font-size: 12px;">
                         Reset_Password
                     </a>
-                    <a href="{% url 'resend_verification' %}" style="font-family: var(--font-hud); font-size: 12px;">
-                        Resend_Verification
-                    </a>
                 </div>
                 <button type="submit" class="btn-execute">
                     AUTHENTICATE
@@ -72,6 +69,9 @@
                 CREATE_ACCOUNT
             </a>
         </div>
+        <a href="{% url 'resend_verification' %}" style="font-family: var(--font-hud); font-size: 12px;">
+            Resend_Verification
+        </a>
     </section>
 </div>
 {% endblock content %}

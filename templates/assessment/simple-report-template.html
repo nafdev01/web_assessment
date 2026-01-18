@@ -6,11 +6,11 @@
     <style>
         @page {
             size: A4;
-            margin: 1.5cm;
+            margin: 2cm;
         }
 
         body {
-            font-family: Helvetica, sans-serif;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 10pt;
             line-height: 1.5;
             color: #333;
@@ -18,114 +18,108 @@
 
         h1 {
             font-size: 24pt;
-            color: #161B22; /* Text Dark */
-            text-align: center;
-            margin-bottom: 20px;
-            text-transform: uppercase;
+            color: #000;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+        
+        .report-subtitle {
+            font-size: 14pt;
+            color: #666;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
         }
 
         h2 {
             font-size: 16pt;
-            color: #161B22;
-            border-bottom: 2px solid #00E396; /* Neon Green Accent */
+            color: #000;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
             padding-bottom: 5px;
-            margin-top: 30px;
-            margin-bottom: 15px;
         }
 
-        /* Header Table */
+        /* Clean Header Info */
         .info-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-            border: 1px solid #ccc;
+            margin-bottom: 40px;
         }
         
         .info-table td {
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 8px 0;
             vertical-align: top;
         }
 
         .label {
-            font-weight: bold;
-            color: #666;
-            font-size: 9pt;
+            font-size: 8pt;
+            color: #777;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
         }
 
         .value {
             font-size: 11pt;
+            font-weight: bold;
             color: #000;
         }
 
-        /* Vulnerability Box */
-        .vuln-container {
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            margin-bottom: 20px;
-            padding: 0;
+        /* Vulnerability Item - Clean List Style */
+        .vuln-item {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
             page-break-inside: avoid;
         }
 
-        .vuln-header {
-            background-color: #161B22;
-            color: #fff;
-            padding: 8px 12px;
+        .vuln-title {
+            font-size: 12pt;
             font-weight: bold;
-            font-size: 11pt;
-            border-bottom: 1px solid #000;
+            color: #000;
+            margin-bottom: 5px;
         }
 
-        .vuln-body {
-            padding: 12px;
-        }
-
-        .severity-badge {
-            color: #fff;
-            padding: 2px 6px;
-            border-radius: 4px;
+        .severity {
+            display: inline-block;
             font-size: 9pt;
             font-weight: bold;
             text-transform: uppercase;
+            min-width: 80px;
         }
         
-        .sev-info { background-color: #00E5FF; color: #000; }
-        .sev-low { background-color: #00E396; color: #000; }
-        .sev-medium { background-color: #FFD600; color: #000; }
-        .sev-high { background-color: #FF6B35; color: #000; }
-        .sev-critical { background-color: #FF0055; color: #fff; }
+        /* Text-only colors for severity */
+        .sev-info { color: #3498db; }
+        .sev-low { color: #2ecc71; }
+        .sev-medium { color: #f39c12; }
+        .sev-high { color: #e74c3c; }
+        .sev-critical { color: #c0392b; }
 
         .meta-row {
-            margin-bottom: 5px;
-        }
-        
-        .meta-key {
-            font-weight: bold;
             font-size: 9pt;
             color: #555;
-            width: 120px;
-            display: inline-block;
+            margin-bottom: 3px;
         }
-
-        .description-box {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #eee;
+        
+        .description {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            color: #444;
         }
 
         .ref-list {
-            margin-top: 5px;
-            padding-left: 20px;
+            margin-top: 10px;
+            padding-left: 15px;
+            font-size: 9pt;
         }
         
-        a { color: #00E5FF; text-decoration: none; }
+        a { color: #000; text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <h1>Simple Assessment Report</h1>
+    <div class="report-subtitle">CONFIDENTIAL</div>
 
     <table class="info-table">
         <tr>
@@ -138,63 +132,49 @@
                 <div class="value">{{ assessment.website }}</div>
             </td>
             <td width="33%">
-                <div class="label">Assessed On</div>
-                <div class="value">{{ assessment.tested_on|date:"Y-m-d H:i" }}</div>
+                <div class="label">Assessment Date</div>
+                <div class="value">{{ assessment.tested_on|date:"F d, Y" }}</div>
             </td>
         </tr>
     </table>
 
-    <h2>Identified Vulnerabilities</h2>
+    <h2>Summary of Findings</h2>
 
     {% if nuclei_logs %}
         {% for log in nuclei_logs %}
-        <div class="vuln-container">
-            <div class="vuln-header">
-                <span class="severity-badge sev-{{ log.info.severity|lower|default:'info' }}">
+        <div class="vuln-item">
+            <div class="vuln-title">
+                <span class="severity sev-{{ log.info.severity|lower|default:'info' }}">
                     {{ log.info.severity|upper|default:"INFO" }}
                 </span>
-                &nbsp;&nbsp;
                 {{ log.info.name|default:log.template_id }}
             </div>
             
-            <div class="vuln-body">
-                <div class="meta-row">
-                    <span class="meta-key">Template ID:</span> {{ log.template_id }}
-                </div>
-                <!-- Removed matched_at, type if not needed in simple -->
-                <!-- Simple report often just wants names and descriptions -->
-                
-                {% if log.host %}
-                <div class="meta-row">
-                    <span class="meta-key">Host:</span> {{ log.host }}
-                </div>
-                {% endif %}
-
-                {% if log.info.description %}
-                <div class="description-box">
-                    <strong>Description:</strong><br/>
-                    {{ log.info.description }}
-                </div>
-                {% endif %}
-                
-                <!-- References are usually OK in simple reports -->
-                {% if log.info.reference %}
-                <div style="margin-top: 10px;">
-                    <strong>References:</strong>
-                    <ul class="ref-list">
-                    {% for ref in log.info.reference %}
-                        <li><a href="{{ ref }}">{{ ref }}</a></li>
-                    {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
+            <div class="meta-row">
+                <strong>Host:</strong> {{ log.host }}
             </div>
+
+            {% if log.info.description %}
+            <div class="description">
+                {{ log.info.description }}
+            </div>
+            {% endif %}
+
+            {% if log.info.reference %}
+            <div style="margin-top: 10px;">
+                <div style="font-size: 8pt; font-weight: bold; margin-bottom: 4px;">REFERENCES</div>
+                <ul class="ref-list">
+                {% for ref in log.info.reference %}
+                    <li><a href="{{ ref }}">{{ ref }}</a></li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
         </div>
         {% endfor %}
     {% else %}
-        <div style="text-align: center; padding: 50px; background-color: #f9f9f9;">
-            <h3>No Vulnerabilities Found</h3>
-            <p>The scan did not detect any issues matching the current profile.</p>
+        <div style="padding: 20px 0; color: #666;">
+            <p>No vulnerabilities identified.</p>
         </div>
     {% endif %}
 

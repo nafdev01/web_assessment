@@ -47,7 +47,7 @@
 
     <!-- Password Modal -->
     <div id="pdf-password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
-      <form id="pdf-form" method="post" action="{% url 'view_report_pdf' assessment.id %}" style="background: var(--bg-panel); border: 1px solid var(--neon-cyan); padding: 32px; width: 400px; max-width: 90%; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);">
+      <form id="pdf-form" method="post" action="{% url 'view_report_pdf' assessment.id %}" autocomplete="off" style="background: var(--bg-panel); border: 1px solid var(--neon-cyan); padding: 32px; width: 400px; max-width: 90%; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);">
         {% csrf_token %}
         <h3 style="color: var(--neon-cyan); margin-bottom: 24px; font-family: var(--font-hud); letter-spacing: 2px;">SECURE DOWNLOAD</h3>
         <p style="color: var(--text-dim); margin-bottom: 24px; font-size: 14px;">Enter your login password to encrypt and download the report.</p>
@@ -56,7 +56,7 @@
         
         <div style="margin-bottom: 24px;">
           <label style="display: block; color: var(--text-bright); margin-bottom: 8px; font-size: 12px; font-family: var(--font-hud);">PASSWORD</label>
-          <input type="password" name="password" required class="form-control" style="width: 100%;">
+          <input type="password" name="password" required class="form-control" style="width: 100%;" autocomplete="new-password">
         </div>
         
         <div style="display: flex; justify-content: flex-end; gap: 12px;">
@@ -70,6 +70,10 @@
       function openPdfModal(type) {
         document.getElementById('pdf-type-input').value = type;
         document.getElementById('pdf-password-modal').style.display = 'flex';
+        // Focus password field
+        setTimeout(() => {
+            document.querySelector('#pdf-form input[name="password"]').focus();
+        }, 100);
       }
       
       // Close modal if clicking outside
@@ -77,6 +81,18 @@
           if (e.target === this) {
               this.style.display = 'none';
           }
+      });
+
+      // Clear password and hide modal after submission
+      document.getElementById('pdf-form').addEventListener('submit', function() {
+          const form = this;
+          const modal = document.getElementById('pdf-password-modal');
+          
+          // Wait briefly to ensure submission starts, then reset and close
+          setTimeout(() => {
+              form.reset();
+              modal.style.display = 'none';
+          }, 500);
       });
     </script>
   </section>

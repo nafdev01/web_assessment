@@ -33,11 +33,6 @@
             <span class="brand">WVAT</span>
         </a>
 
-        <div class="nav-target">
-            <span class="label">TARGET:</span>
-            <span id="currentTarget">NO_TARGET_SET</span>
-        </div>
-
         <ul class="nav-links">
             {% if user.is_authenticated %}
                 <li><a href="{% url 'assess_site' %}" class="nav-link {% if request.resolver_match.url_name == 'assess_site' %}active{% endif %}">Assess</a></li>

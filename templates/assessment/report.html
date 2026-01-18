@@ -1,179 +1,150 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
 
 {% block title %}>_ WVAT // Assessment Report{% endblock title %}
 
 {% block content %}
 <div class="container">
-    <!-- Report Header -->
-    <section class="panel-section">
-        <div class="section-header">
-            <h2 class="section-title">Assessment_Report</h2>
-            <span class="section-badge">Complete</span>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px;">
-            <div>
-                <p style="font-family: var(--font-hud); font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
-                    Client
-                </p>
-                <p style="font-family: var(--font-hud); font-size: 14px; color: var(--text-bright);">
-                    {{ assessment.client.get_full_name }}
-                </p>
-            </div>
-
-            <div>
-                <p style="font-family: var(--font-hud); font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
-                    Target
-                </p>
-                <p style="font-family: var(--font-hud); font-size: 14px; color: var(--neon-cyan);">
-                    <a href="{{ assessment.website }}" target="_blank">{{ assessment.website }}</a>
-                </p>
-            </div>
-
-            <div>
-                <p style="font-family: var(--font-hud); font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
-                    Tested On
-                </p>
-                <p style="font-family: var(--font-hud); font-size: 14px; color: var(--text-bright);">
-                    {{ assessment.tested_on|date:"Y-m-d H:i:s" }}
-                </p>
-            </div>
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; gap: 16px;">
-            <a href="{% url 'view_report_pdf' assessment.id %}" class="btn-info">
-                DOWNLOAD_PDF
-            </a>
-        </div>
-    </section>
-
-    <!-- Stats Grid -->
-    {% with critical_count=assessment.vulnerabilities.filter|length high_count=assessment.vulnerabilities.all|length medium_count=0 low_count=0 %}
-    <div class="stats-grid">
-        <div class="stat-card critical">
-            <div class="stat-label">Critical</div>
-            <div class="stat-value">{{ assessment.vulnerabilities.filter|length|default:0 }}</div>
-        </div>
-        <div class="stat-card high">
-            <div class="stat-label">High</div>
-            <div class="stat-value">0</div>
-        </div>
-        <div class="stat-card medium">
-            <div class="stat-label">Medium</div>
-            <div class="stat-value">0</div>
-        </div>
-        <div class="stat-card low">
-            <div class="stat-label">Low / Info</div>
-            <div class="stat-value">0</div>
-        </div>
-    </div>
-    {% endwith %}
-
-    <!-- Vulnerabilities List -->
-    <div class="results-header">
-        <h3 class="results-title">Scan_Results</h3>
-        <span class="results-count">[ {{ assessment.vulnerabilities.count }} VULNERABILITIES DETECTED ]</span>
+  <!-- Report Header -->
+  <section class="panel-section">
+    <div class="section-header">
+      <h2 class="section-title">Assessment_Report</h2>
+      <span class="section-badge">Complete</span>
     </div>
 
-    {% if assessment.vulnerabilities.count > 0 %}
-    <div class="vuln-list">
-        {% for vulnerability in assessment.vulnerabilities.all %}
-        <article class="vuln-card {% if vulnerability.level == '3' %}critical{% elif vulnerability.level == '2' %}high{% elif vulnerability.level == '1' %}medium{% else %}low{% endif %}">
-            <div class="vuln-header">
-                <div class="vuln-title-group">
-                    <h4 class="vuln-title">{{ vulnerability.vulnerability_type }}</h4>
-                    <span class="vuln-id">{{ vulnerability.info|truncatewords:15 }}</span>
-                </div>
-                <span class="vuln-severity {% if vulnerability.level == '3' %}critical{% elif vulnerability.level == '2' %}high{% elif vulnerability.level == '1' %}medium{% else %}low{% endif %}">
-                    {% if vulnerability.level == '3' %}Critical
-                    {% elif vulnerability.level == '2' %}High
-                    {% elif vulnerability.level == '1' %}Medium
-                    {% else %}Low{% endif %}
-                </span>
-            </div>
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-bottom: 24px;
+      "
+    >
+      <div>
+        <p
+          style="
+            font-family: var(--font-hud);
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+          "
+        >
+          Client
+        </p>
+        <p
+          style="
+            font-family: var(--font-hud);
+            font-size: 14px;
+            color: var(--text-bright);
+          "
+        >
+          {{ assessment.client.get_full_name }}
+        </p>
+      </div>
 
-            <div class="vuln-path">
-                {{ vulnerability.method }} {{ assessment.website }}{{ vulnerability.path }}
-            </div>
+      <div>
+        <p
+          style="
+            font-family: var(--font-hud);
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+          "
+        >
+          Target
+        </p>
+        <p
+          style="
+            font-family: var(--font-hud);
+            font-size: 14px;
+            color: var(--neon-cyan);
+          "
+        >
+          <a href="{{ assessment.website }}" target="_blank"
+            >{{ assessment.website }}</a
+          >
+        </p>
+      </div>
 
-            <div class="vuln-body">
-                {% for classification in vulnerability.classification.all %}
-                <p class="vuln-description">
-                    {{ classification.description }}
-                </p>
-
-                <div style="background: var(--bg-void); padding: 16px; margin-bottom: 16px; border-left: 2px solid var(--neon-cyan);">
-                    <p style="font-family: var(--font-hud); font-size: 11px; color: var(--neon-cyan); text-transform: uppercase; margin-bottom: 8px;">
-                        Remediation
-                    </p>
-                    <p style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">
-                        {{ classification.solution }}
-                    </p>
-                </div>
-
-                {% if classification.references.all %}
-                <div>
-                    <p style="font-family: var(--font-hud); font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 12px;">
-                        External References
-                    </p>
-                    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-                        {% for reference in classification.references.all %}
-                        <a href="{{ reference.reference_link }}" target="_blank" style="font-family: var(--font-hud); font-size: 11px; padding: 6px 12px; background: var(--bg-void); border: 1px solid var(--border-tech); display: inline-block;">
-                            {{ reference.name }}
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-                {% endfor %}
-
-                <div class="vuln-meta" style="margin-top: 20px;">
-                    <div class="vuln-meta-item">
-                        <span class="vuln-meta-label">Method:</span>
-                        <span class="vuln-meta-value">{{ vulnerability.method }}</span>
-                    </div>
-                    <div class="vuln-meta-item">
-                        <span class="vuln-meta-label">Parameter:</span>
-                        <span class="vuln-meta-value">{{ vulnerability.parameter|default:"N/A" }}</span>
-                    </div>
-                    <div class="vuln-meta-item">
-                        <span class="vuln-meta-label">Found On:</span>
-                        <span class="vuln-meta-value">{{ vulnerability.found_on|date:"Y-m-d H:i" }}</span>
-                    </div>
-                </div>
-
-                {% if vulnerability.http_request %}
-                <div style="margin-top: 16px;">
-                    <p style="font-family: var(--font-hud); font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px;">
-                        HTTP Request
-                    </p>
-                    <pre style="background: var(--bg-void); padding: 12px; font-family: var(--font-hud); font-size: 11px; color: var(--neon-green); overflow-x: auto; border: 1px solid var(--border-tech);">{{ vulnerability.http_request }}</pre>
-                </div>
-                {% endif %}
-
-                {% if vulnerability.curl_command %}
-                <div style="margin-top: 16px;">
-                    <p style="font-family: var(--font-hud); font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px;">
-                        CURL Command
-                    </p>
-                    <pre style="background: var(--bg-void); padding: 12px; font-family: var(--font-hud); font-size: 11px; color: var(--neon-cyan); overflow-x: auto; border: 1px solid var(--border-tech);">{{ vulnerability.curl_command }}</pre>
-                </div>
-                {% endif %}
-            </div>
-        </article>
-        {% endfor %}
+      <div>
+        <p
+          style="
+            font-family: var(--font-hud);
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+          "
+        >
+          Tested On
+        </p>
+        <p
+          style="
+            font-family: var(--font-hud);
+            font-size: 14px;
+            color: var(--text-bright);
+          "
+        >
+          {{ assessment.tested_on|date:"Y-m-d H:i:s" }}
+        </p>
+      </div>
     </div>
-    {% else %}
+
+    <div style="display: flex; justify-content: flex-end; gap: 16px">
+      <a href="{% url 'view_report_pdf' assessment.id %}" class="btn-info">
+        DOWNLOAD_PDF
+      </a>
+    </div>
+  </section>
+
+  <!-- Nuclei Logs -->
+  <div class="results-header">
+    <h3 class="results-title">Assessment_Logs</h3>
+    <span class="results-count">[ RAW JSONL OUTPUT ]</span>
+  </div>
+
+  <div class="vuln-list">
+    {% if nuclei_logs %} {% for log in nuclei_logs %}
+    <article class="vuln-card medium" style="padding: 0; overflow: hidden">
+      <pre
+        style="
+          background: var(--bg-void);
+          padding: 20px;
+          margin: 0;
+          font-family: &quot;Courier New&quot;, monospace;
+          font-size: 13px;
+          line-height: 1.5;
+          white-space: pre-wrap;
+          color: var(--neon-green);
+          border-left: 2px solid var(--neon-cyan);
+        "
+      >
+{{ log }}</pre
+      >
+    </article>
+    {% endfor %} {% else %}
     <div class="panel-section">
-        <div style="text-align: center; padding: 40px;">
-            <p style="font-family: var(--font-hud); font-size: 24px; color: var(--neon-green); margin-bottom: 16px;">
-                [✓] NO_VULNERABILITIES_DETECTED
-            </p>
-            <p style="font-size: 14px; color: var(--text-dim);">
-                The scan completed successfully without identifying any security vulnerabilities.
-            </p>
-        </div>
+      <div style="text-align: center; padding: 40px">
+        <p
+          style="
+            font-family: var(--font-hud);
+            font-size: 24px;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+          "
+        >
+          NO_LOGS_AVAILABLE
+        </p>
+        <p style="font-size: 14px; color: var(--text-dim)">
+          The raw Nuclei output file could not be found or is empty.
+        </p>
+      </div>
     </div>
     {% endif %}
+  </div>
 </div>
 {% endblock content %}

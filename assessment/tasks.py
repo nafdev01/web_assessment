@@ -39,15 +39,34 @@ def conduct_assessment(detail_url, vuln_assessment_id):
     ]
 
     logger.info(f"Executing command: {' '.join(command)}")
-    result = subprocess.run(command, capture_output=True, text=True)
-
+    
+    # Run nuclei with real-time output streaming
+    process = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        bufsize=1
+    )
+    
+    # Stream stdout in real-time
+    for line in process.stdout:
+        if line.strip():
+            logger.info(f"Nuclei: {line.strip()}")
+    
+    # Wait for process to complete and get return code
+    return_code = process.wait()
+    
+    # Capture any stderr output
+    stderr_output = process.stderr.read()
+    
     # Check if the command was successful
-    if result.returncode == 0:
+    if return_code == 0:
         logger.info(f"Nuclei scan completed successfully for {vuln_assessment.website}")
     else:
-        logger.warning(f"Nuclei command completed with return code {result.returncode}")
-        if result.stderr:
-            logger.debug(f"Nuclei stderr: {result.stderr}")
+        logger.warning(f"Nuclei command completed with return code {return_code}")
+        if stderr_output:
+            logger.debug(f"Nuclei stderr: {stderr_output}")
 
     # Verify the temp file was created
     if os.path.exists(temp_results_path):

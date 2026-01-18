@@ -11,7 +11,3 @@ __pycache__
 feed.json
 
 *.rdb
-# Ignore Django migration files
-*/migrations/
-*/migrations/*.py
-*/migrations/*.pyc

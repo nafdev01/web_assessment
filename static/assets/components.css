@@ -18,6 +18,7 @@
 }
 
 .page-subtitle {
+  font-family: var(--font-hud);
   font-size: 14px;
   color: var(--text-dim);
 }

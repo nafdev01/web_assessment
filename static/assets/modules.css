@@ -186,7 +186,8 @@
 }
 
 .vuln-description {
-  font-size: 14px;
+  font-family: var(--font-hud);
+  font-size: 13px;
   color: var(--text-dim);
   line-height: 1.6;
   margin-bottom: 16px;
@@ -275,12 +276,14 @@
 }
 
 .hero-subtitle {
-  font-size: 18px;
+  font-family: var(--font-hud);
+  font-size: 16px;
   color: var(--text-dim);
   margin-bottom: 32px;
-  max-width: 600px;
+  max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.6;
 }
 
 .hero-cta {
@@ -332,7 +335,8 @@
 }
 
 .feature-description {
-  font-size: 14px;
+  font-family: var(--font-hud);
+  font-size: 13px;
   color: var(--text-dim);
   line-height: 1.6;
 }
@@ -548,16 +552,17 @@
 }
 
 .notification-title {
-  font-family: var(--font-body);
-  font-size: 16px;
+  font-family: var(--font-hud);
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-bright);
   margin-bottom: 4px;
 }
 
 .notification-message {
+  font-family: var(--font-hud);
+  font-size: 13px;
   color: var(--text-dim);
-  font-size: 14px;
   line-height: 1.5;
 }
 

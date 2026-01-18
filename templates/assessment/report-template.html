@@ -40,64 +40,81 @@
         <h2 class="text-6xl text-center font-light underline mb-8">Vulnerabilities We Found</h2>
 
         <div class="w-4/5 mx-auto space-y-2">
-            {% if assessment.vulnerabilities.all %}
-                {% for vulnerability in assessment.vulnerabilities.all %}
+            {% if nuclei_logs %}
+                {% for vulnerability in nuclei_logs %}
                 <div class="border border-black rounded-lg overflow-hidden">
                     <button 
                         class="w-full bg-gray-100 hover:bg-gray-200 border border-black rounded-md p-4 text-left transition-colors duration-200"
-                        onclick="toggleAccordion('collapse{{vulnerability.id}}')"
+                        onclick="toggleAccordion('collapse{{forloop.counter}}')"
                         type="button">
-                        <p class="text-2xl font-bold text-center">{{forloop.counter}}. {{ vulnerability.info }}</p>
+                        <p class="text-2xl font-bold text-center">{{forloop.counter}}. {{ vulnerability.info.name|default:vulnerability.template_id }}</p>
                     </button>
-                    <div id="collapse{{vulnerability.id}}" class="hidden">
+                    <div id="collapse{{forloop.counter}}" class="hidden">
                         <div class="p-6 bg-white">
                             <p class="text-xl mb-3">
-                                <strong>Vulnerability Category:</strong> {{ vulnerability.vulnerability_type }}
+                                <strong>Vulnerability Category:</strong> {{ vulnerability.info.tags|join:", "|default:"N/A" }}
                             </p>
                             <p class="text-xl mb-3">
-                                <strong>Method:</strong> {{ vulnerability.method }}
+                                <strong>Template ID:</strong> {{ vulnerability.template_id }}
                             </p>
                             <p class="text-xl mb-3">
-                                <strong>Path:</strong> {{ assessment.website }}{{ vulnerability.path }}
+                                <strong>Severity:</strong> {{ vulnerability.info.severity|upper }}
+                            </p>
+                             <p class="text-xl mb-3">
+                                <strong>Matched At:</strong> {{ vulnerability.matched_at }}
                             </p>
                             <p class="text-xl mb-3">
-                                <strong>Level:</strong> {{ vulnerability.level }}
+                                <strong>Host:</strong> {{ vulnerability.host }}
                             </p>
+                            {% if vulnerability.ip %}
                             <p class="text-xl mb-3">
-                                <strong>Parameter:</strong> {{ vulnerability.parameter }}
+                                <strong>IP:</strong> {{ vulnerability.ip }}
                             </p>
-                            <p class="text-xl mb-3">
-                                <strong>HTTP Request:</strong> {{ vulnerability.http_request }}
-                            </p>
-                            <p class="text-xl mb-3">
-                                <strong>Found On:</strong> {{ vulnerability.found_on }}
-                            </p>
-
-                            {% for classification in vulnerability.classification.all %}
+                            {% endif %}
+                            
+                            {% if vulnerability.info.description %}
                             <p class="text-xl mb-3">
                                 <strong>Description:</strong>
-                                <span>{{ classification.description }}</span>
+                                <span>{{ vulnerability.info.description }}</span>
                             </p>
-                            <p class="text-xl mb-3">
-                                <strong>Solution:</strong>
-                                <span>{{ classification.solution }}</span>
-                            </p>
+                            {% endif %}
 
+                            {% if vulnerability.info.classification %}
+                                <div class="mb-3">
+                                    <strong>Classification:</strong>
+                                    <ul class="list-none pl-4 mt-2">
+                                        {% for key, value in vulnerability.info.classification.items %}
+                                            {% if value %}
+                                            <li class="text-lg"><span class="font-semibold">{{ key|upper }}:</span> {{ value }}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            
+                             {% if vulnerability.curl_command %}
+                            <div class="mb-3">
+                                <p class="text-xl mb-2"><strong>Reproduce (cURL):</strong></p>
+                                <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto whitespace-pre-wrap word-break-break-all">{{ vulnerability.curl_command }}</pre>
+                            </div>
+                            {% endif %}
+
+                            {% if vulnerability.info.reference %}
                             <div class="border border-gray-300 rounded-lg p-4 mt-6">
                                 <h3 class="text-4xl text-center font-light underline mb-4">References</h3>
                                 <ul class="list-none pl-10 space-y-2">
-                                    {% for reference in classification.references.all %}
+                                    {% for reference in vulnerability.info.reference %}
                                     <li class="text-2xl">
                                         <a class="text-blue-600 hover:text-blue-800 underline" 
-                                           href="{{ reference.reference_link }}" 
+                                           href="{{ reference }}" 
                                            target="_blank">
-                                            {{ reference.name }}
+                                            {{ reference }}
                                         </a>
                                     </li>
                                     {% endfor %}
                                 </ul>
                             </div>
-                            {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>

@@ -214,14 +214,64 @@ def view_report_pdf(request, vuln_assessment_id):
         f"User {request.user.username} generating PDF report for assessment {vuln_assessment_id}"
     )
 
+    # --- START: Load and Parse Nuclei Logs (Same logic as view_report) ---
+    nuclei_logs = []
+    if vuln_assessment.nuclei_results_file:
+        try:
+            vuln_assessment.nuclei_results_file.open("rb")
+            content = vuln_assessment.nuclei_results_file.read().decode(
+                "utf-8", errors="replace"
+            )
+
+            # Try parsing as a single JSON array first (Nuclei JSON export)
+            try:
+                data = json.loads(content)
+                if isinstance(data, list):
+                    nuclei_logs = data
+                else:
+                    nuclei_logs = [data]
+            except json.JSONDecodeError:
+                # Fallback to JSONL (line by line)
+                nuclei_logs = []
+                for line in content.splitlines():
+                    if line.strip():
+                        try:
+                            log_entry = json.loads(line)
+                            nuclei_logs.append(log_entry)
+                        except json.JSONDecodeError:
+                            continue
+
+            # Normalize keys for Django templates (replace hyphens with underscores)
+            def normalize_keys(obj):
+                if isinstance(obj, dict):
+                    return {
+                        k.replace("-", "_"): normalize_keys(v) for k, v in obj.items()
+                    }
+                elif isinstance(obj, list):
+                    return [normalize_keys(i) for i in obj]
+                else:
+                    return obj
+
+            nuclei_logs = normalize_keys(nuclei_logs)
+            vuln_assessment.nuclei_results_file.close()
+
+        except Exception as e:
+            logger.error(
+                f"Error reading results file for assessment {vuln_assessment.id} PDF generation: {e}"
+            )
+            nuclei_logs = []  # Ensure it's empty on error
+    # --- END: Load and Parse Nuclei Logs ---
+
     template_name = "assessment/report-template.html"
-    context = {"assessment": vuln_assessment}
+    # Pass nuclei_logs instead of relying on assessment.vulnerabilities
+    context = {"assessment": vuln_assessment, "nuclei_logs": nuclei_logs}
     html_string = render_to_string(template_name, context)
 
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = (
         f"inline; filename={request.user.get_full_name()}'s Report for {vuln_assessment.website}.pdf"
     )
+    # xhtml2pdf handles CSS better if we link resources properly, but for now we rely on inline/CDN
     pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), response)
 
     if not pdf.err:

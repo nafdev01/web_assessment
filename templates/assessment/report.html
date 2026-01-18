@@ -4,171 +4,7 @@
 
 {% block content %}
 <div class="container">
-  <style>
-    /* Premium UI Enhancements */
-    .panel-section {
-      background: rgba(10, 10, 10, 0.8);
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(10px);
-    }
-    
-    .report-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-bottom: 24px;
-      padding: 16px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(0, 255, 255, 0.1);
-    }
 
-    .report-label {
-      font-family: var(--font-hud);
-      font-size: 11px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 4px;
-    }
-
-    .report-value {
-      font-family: var(--font-hud);
-      font-size: 14px;
-      color: var(--text-bright);
-    }
-
-    .vuln-card {
-      background: rgba(20, 20, 25, 0.95);
-      border: 1px solid var(--border-color);
-      border-left: 4px solid var(--text-dim);
-      border-radius: 8px;
-      padding: 24px;
-      margin-bottom: 24px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      animation: fadeInUp 0.5s ease backwards;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .vuln-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-
-    .vuln-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    }
-
-    .vuln-card.critical { border-left-color: var(--neon-pink); }
-    .vuln-card.high { border-left-color: #ff4444; }
-    .vuln-card.medium { border-left-color: #ffbb33; }
-    .vuln-card.low { border-left-color: #00C851; }
-    .vuln-card.info { border-left-color: #33b5e5; }
-
-    .meta-card {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 16px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      margin-bottom: 24px;
-    }
-
-    .meta-card-title {
-      color: var(--text-bright);
-      margin-bottom: 12px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 600;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 8px;
-    }
-
-    .meta-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    .meta-item {
-      margin-bottom: 8px;
-    }
-
-    .meta-key {
-      display: block;
-      font-size: 10px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-
-    .meta-val {
-      font-size: 13px;
-      color: var(--neon-cyan);
-      font-family: monospace;
-      word-break: break-all;
-    }
-
-    .tag-badge {
-      background: rgba(0, 255, 255, 0.05);
-      color: var(--neon-cyan);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-family: var(--font-hud);
-      border: 1px solid rgba(0, 255, 255, 0.15);
-      transition: all 0.2s ease;
-      display: inline-block;
-      text-decoration: none;
-    }
-
-    .tag-badge:hover {
-      background: rgba(0, 255, 255, 0.15);
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-    }
-
-    .tech-details summary {
-      cursor: pointer;
-      color: var(--neon-purple);
-      margin-bottom: 16px;
-      font-family: var(--font-hud);
-      font-size: 13px;
-      letter-spacing: 0.5px;
-      padding: 8px;
-      border-radius: 4px;
-      transition: background 0.2s;
-    }
-
-    .tech-details summary:hover {
-      background: rgba(188, 19, 254, 0.1);
-    }
-
-    .code-block {
-      background: #0d0d0d;
-      padding: 16px;
-      border-radius: 6px;
-      border: 1px solid #2a2a2a;
-      overflow-x: auto;
-      font-family: 'Fira Code', monospace;
-      font-size: 12px;
-      color: #e0e0e0;
-      margin-top: 4px;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
   <!-- Report Header -->
   <section class="panel-section">
     <div class="section-header">
@@ -176,44 +12,83 @@
       <span class="section-badge">Complete</span>
     </div>
 
-    <div class="report-grid">
-      <div>
-        <p class="report-label">Client</p>
-        <p class="report-value">{{ assessment.client.get_full_name }}</p>
+    <div class="stats-grid">
+      <div class="stat-card medium">
+        <div class="stat-label">Client</div>
+        <div class="stat-value" style="font-size: 18px; word-break: break-word;">{{ assessment.client.get_full_name }}</div>
       </div>
 
-      <div>
-        <p class="report-label">Target</p>
-        <p class="report-value">
-          <a href="{{ assessment.website }}" target="_blank" style="color: var(--neon-cyan); text-decoration: none;">
-            {{ assessment.website }}
-          </a>
-        </p>
+      <div class="stat-card medium">
+        <div class="stat-label">Target</div>
+        <div class="stat-value" style="font-size: 16px; word-break: break-all;">
+          <a href="{{ assessment.website }}" target="_blank">{{ assessment.website }}</a>
+        </div>
       </div>
 
-      <div>
-        <p class="report-label">Tested On</p>
-        <p class="report-value">{{ assessment.tested_on|date:"Y-m-d H:i:s" }}</p>
+      <div class="stat-card medium">
+        <div class="stat-label">Tested On</div>
+        <div class="stat-value" style="font-size: 18px;">{{ assessment.tested_on|date:"Y-m-d H:i:s" }}</div>
+      </div>
+
+      <div class="stat-card {{ nuclei_logs|length|yesno:'high,low' }}">
+        <div class="stat-label">Total Issues</div>
+        <div class="stat-value">{{ nuclei_logs|length }}</div>
       </div>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; gap: 16px">
+    <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
       <a href="{% url 'view_report_pdf' assessment.id %}" class="btn-info">
         DOWNLOAD_PDF
       </a>
     </div>
   </section>
 
-  <!-- Nuclei Logs -->
-  <div class="results-header">
-    <h3 class="results-title">Assessment_Logs</h3>
-    <span class="results-count">
-      {% if tag_filter %}
-        FILTER: "{{ tag_filter }}" <a href="?" style="color: var(--neon-pink); margin-left: 8px; text-decoration: none;">[ CLEAR ]</a>
-      {% else %}
-        [ RAW JSONL OUTPUT ]
-      {% endif %}
-    </span>
+  <!-- Nuclei Logs Header & Filtering -->
+  <div class="results-header" style="display: block; margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3 class="results-title">Assessment Results</h3>
+      <span class="results-count">
+        {% if search_query or tag_filter %}
+          FOUND: {{ nuclei_logs|length }}
+        {% else %}
+          TOTAL: {{ nuclei_logs|length }}
+        {% endif %}
+      </span>
+    </div>
+
+    <!-- Filter Form -->
+    <form method="get" style="background: var(--bg-panel); border: 1px solid var(--border-tech); padding: 16px;">
+      <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+        
+        <!-- Search -->
+        <div style="flex: 2; min-width: 200px;">
+          <input type="text" name="search" class="form-control" placeholder="SEARCH BY NAME, ID, DESCRIPTION..." value="{{ search_query|default:'' }}">
+        </div>
+
+        <!-- Tag Filter -->
+        <div style="flex: 1; min-width: 150px;">
+          <select name="tag" class="form-control" style="background-image: none; cursor: pointer;">
+            <option value="">-- ALL TAGS --</option>
+            {% for tag in all_tags %}
+              <option value="{{ tag }}" {% if tag == tag_filter %}selected{% endif %}>{{ tag }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; gap: 8px;">
+          <button type="submit" class="btn-primary">
+            SEARCH_LOGS
+          </button>
+          
+          {% if search_query or tag_filter %}
+             <a href="?" class="btn-secondary" style="display: flex; align-items: center; justify-content: center;">
+               CLEAR
+             </a>
+          {% endif %}
+        </div>
+      </div>
+    </form>
   </div>
 
   <div class="vuln-list">
@@ -225,8 +100,13 @@
           <div class="vuln-header">
             <div class="vuln-title-group">
               <h4 class="vuln-title">{{ log.info.name|default:log.template_id }}</h4>
-              <span class="vuln-id" style="font-family: monospace;">{{ log.template_id }}</span>
-              <span class="vuln-id" style="margin-left: 8px;">[{{ log.type|upper }}]</span>
+              <div class="vuln-id">
+                {{ log.template_id }}
+                <span style="margin: 0 8px; color: var(--border-tech);">|</span>
+                {{ log.type|upper }}
+                <span style="margin: 0 8px; color: var(--border-tech);">|</span>
+                {{ log.timestamp }}
+              </div>
             </div>
             <span class="vuln-severity {{ log.info.severity|lower|default:'info' }}">
               {{ log.info.severity|upper|default:"INFO" }}
@@ -236,158 +116,64 @@
           <div class="vuln-body">
             <!-- Description -->
             {% if log.info.description %}
-            <p class="vuln-description">
+            <div class="vuln-description">
+              <span class="vuln-meta-label" style="display: block; margin-bottom: 8px;">DESCRIPTION</span>
               {{ log.info.description }}
-            </p>
-            {% endif %}
-
-            <!-- Classification -->
-            {% if log.info.classification %}
-            <div style="margin-bottom: 24px; background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 4px; border: 1px solid var(--border-color);">
-              <h5 style="color: var(--text-bright); margin-bottom: 8px; font-size: 13px; text-transform: uppercase;">Classification</h5>
-              <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-                {% for key, value in log.info.classification.items %}
-                  {% if value %}
-                  <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 10px; color: var(--text-dim); text-transform: uppercase;">{{ key }}</span>
-                    <span style="font-size: 12px; color: var(--neon-cyan); font-family: monospace;">{{ value }}</span>
-                  </div>
-                  {% endif %}
-                {% endfor %}
-              </div>
-            </div>
-            {% endif %}
-
-            <!-- Additional Metadata Card -->
-            {% if log.info.metadata %}
-            <div style="margin-bottom: 24px; background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 4px; border: 1px solid var(--border-color);">
-              <h5 style="color: var(--text-bright); margin-bottom: 8px; font-size: 13px; text-transform: uppercase;">Metadata</h5>
-              <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-                {% for m_key, m_val in log.info.metadata.items %}
-                  <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 10px; color: var(--text-dim); text-transform: uppercase;">{{ m_key }}</span>
-                    <span style="font-size: 12px; color: var(--neon-cyan); font-family: monospace; word-break: break-all;">{{ m_val }}</span>
-                  </div>
-                {% endfor %}
-              </div>
             </div>
             {% endif %}
 
             <!-- Metadata Grid -->
-            <div class="vuln-meta" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px;">
-              
-              <!-- Left Column -->
-              <div>
+            <div style="margin-bottom: 24px;">
+              <div class="vuln-meta">
+                <!-- Classification -->
+                {% for key, value in log.info.classification.items %}
+                  {% if value %}
+                  <div class="vuln-meta-item">
+                    <span class="vuln-meta-label">{{ key }}</span>
+                    <span class="vuln-meta-value">{{ value }}</span>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+
+                <!-- Core Target Info -->
                 {% if log.host %}
                 <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Host:</span>
+                  <span class="vuln-meta-label">Host</span>
                   <span class="vuln-meta-value">{{ log.host }}</span>
-                </div>
-                {% endif %}
-
-                {% if log.url %}
-                <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">URL:</span>
-                  <span class="vuln-meta-value"><a href="{{ log.url }}" target="_blank" style="color: var(--neon-cyan);">{{ log.url }}</a></span>
-                </div>
-                {% endif %}
-
-                {% if log.matched_at %}
-                <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Matched At:</span>
-                  <span class="vuln-meta-value"><a href="{{ log.matched_at }}" target="_blank" style="color: var(--neon-cyan);">{{ log.matched_at }}</a></span>
                 </div>
                 {% endif %}
 
                 {% if log.ip %}
                 <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">IP:</span>
+                  <span class="vuln-meta-label">IP</span>
                   <span class="vuln-meta-value">{{ log.ip }}</span>
                 </div>
                 {% endif %}
-              </div>
 
-              <!-- Right Column -->
-              <div>
-                 {% if log.timestamp %}
-                 <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Timestamp:</span>
-                  <span class="vuln-meta-value">{{ log.timestamp }}</span>
-                </div>
-                {% endif %}
-
-                {% if log.matcher_status is not None %}
+                {% if log.port %}
                 <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Matcher Status:</span>
-                  <span class="vuln-meta-value">{{ log.matcher_status }}</span>
-                </div>
-                {% endif %}
-
-                 {% if log.matcher_name %}
-                 <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Matcher Name:</span>
-                  <span class="vuln-meta-value" style="color: var(--neon-pink);">{{ log.matcher_name }}</span>
-                </div>
-                {% endif %}
-
-                {% if log.extractor_name %}
-                <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Extractor Name:</span>
-                  <span class="vuln-meta-value">{{ log.extractor_name }}</span>
-                </div>
-                {% endif %}
-
-                {% if log.type %}
-                <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Type:</span>
-                  <span class="vuln-meta-value">{{ log.type }}</span>
-                </div>
-                {% endif %}
-
-                {% if log.scheme %}
-                <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Scheme:</span>
-                  <span class="vuln-meta-value">{{ log.scheme }}</span>
-                </div>
-                {% endif %}
-
-                 {% if log.port %}
-                <div class="vuln-meta-item">
-                  <span class="vuln-meta-label">Port:</span>
+                  <span class="vuln-meta-label">Port</span>
                   <span class="vuln-meta-value">{{ log.port }}</span>
                 </div>
                 {% endif %}
-
-
-
-
-
+                
+                {% if log.matcher_name %}
+                <div class="vuln-meta-item">
+                  <span class="vuln-meta-label">Matcher</span>
+                  <span class="vuln-meta-value" style="color: var(--neon-pink);">{{ log.matcher_name }}</span>
+                </div>
+                {% endif %}
               </div>
             </div>
 
             <!-- Tags -->
             {% if log.info.tags %}
             <div style="margin-bottom: 24px;">
-              <span class="vuln-meta-label" style="display: block; margin-bottom: 8px;">Tags:</span>
+              <span class="vuln-meta-label" style="display: block; margin-bottom: 8px;">TAGS</span>
               <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                 {% for tag in log.info.tags %}
-                  <a href="?tag={{ tag }}" style="text-decoration: none;">
-                    <span style="
-                      background: rgba(0, 255, 255, 0.1); 
-                      color: var(--neon-cyan); 
-                      padding: 4px 8px; 
-                      border-radius: 4px; 
-                      font-size: 11px; 
-                      font-family: var(--font-hud);
-                      border: 1px solid rgba(0, 255, 255, 0.2);
-                      transition: all 0.2s ease;
-                      display: inline-block;
-                    "
-                    onmouseover="this.style.background='rgba(0, 255, 255, 0.2)'"
-                    onmouseout="this.style.background='rgba(0, 255, 255, 0.1)'"
-                    >
-                      {{ tag }}
-                    </span>
+                  <a href="?tag={{ tag }}" class="section-badge" style="text-decoration: none; cursor: pointer;">
+                    {{ tag }}
                   </a>
                 {% endfor %}
               </div>
@@ -397,74 +183,72 @@
             <!-- Extracted Results -->
             {% if log.extracted_results %}
             <div style="margin-bottom: 24px;">
-              <h5 style="color: var(--text-bright); margin-bottom: 8px; font-size: 14px;">Extracted Results</h5>
-              <div style="background: var(--bg-void); padding: 12px; border-radius: 4px; border: 1px solid var(--border-color);">
-                <ul style="margin: 0; padding-left: 20px; list-style-type: square; color: var(--neon-green);">
+              <div class="vuln-meta-label" style="margin-bottom: 8px;">Extracted Results</div>
+              <div class="vuln-path">
+                <ul style="margin: 0; padding-left: 16px; list-style-type: none;">
                   {% for result in log.extracted_results %}
-                    <li style="word-break: break-all;">{{ result }}</li>
+                    <li style="margin-bottom: 4px; word-break: break-all;">
+                      <span style="color: var(--neon-green); margin-right: 8px;">➜</span>{{ result }}
+                    </li>
                   {% endfor %}
                 </ul>
               </div>
             </div>
             {% endif %}
 
-            <!-- Technical Details (Request/Response) -->
-            <div style="margin-top: 24px;">
-              <details>
-                <summary style="cursor: pointer; color: var(--neon-purple); margin-bottom: 12px; font-family: var(--font-hud);">VIEW_TECHNICAL_DETAILS [REQUEST/RESPONSE]</summary>
+            <!-- Technical Details -->
+            <div style="margin-top: 32px;">
+              <details class="tech-details">
+                <summary class="btn-secondary" style="display: inline-block; width: auto; list-style: none;">
+                  > VIEW TECHNICAL DETAILS
+                </summary>
                 
-                {% if log.curl_command %}
-                <div style="margin-bottom: 16px;">
-                  <span class="vuln-meta-label">Reproduce (cURL):</span>
-                  <pre style="background: var(--bg-void); padding: 12px; overflow-x: auto; color: var(--text-dim); font-size: 12px; border: 1px solid var(--border-color);">{{ log.curl_command }}</pre>
-                </div>
-                {% endif %}
+                <div style="margin-top: 24px; display: grid; gap: 24px;">
+                  {% if log.curl_command %}
+                  <div>
+                    <span class="vuln-meta-label" style="display: block; margin-bottom: 8px;">Reproduce (cURL)</span>
+                    <div class="vuln-path" style="color: var(--text-dim); white-space: pre-wrap;">{{ log.curl_command }}</div>
+                  </div>
+                  {% endif %}
 
-                <div style="display: grid; gap: 16px;">
                   {% if log.request %}
                   <div>
-                     <span class="vuln-meta-label">Request:</span>
-                     <pre style="background: var(--bg-void); padding: 12px; overflow-x: auto; color: var(--neon-cyan); font-size: 12px; border: 1px solid var(--border-color); max-height: 300px;">{{ log.request }}</pre>
+                     <span class="vuln-meta-label" style="display: block; margin-bottom: 8px;">Request</span>
+                     <div class="vuln-path" style="color: var(--neon-cyan); max-height: 300px; overflow-y: auto; white-space: pre-wrap;">{{ log.request }}</div>
                   </div>
                   {% endif %}
 
                   {% if log.response %}
                   <div>
-                     <span class="vuln-meta-label">Response:</span>
-                     <pre style="background: var(--bg-void); padding: 12px; overflow-x: auto; color: var(--neon-green); font-size: 12px; border: 1px solid var(--border-color); max-height: 400px;">{{ log.response }}</pre>
+                     <span class="vuln-meta-label" style="display: block; margin-bottom: 8px;">Response</span>
+                     <div class="vuln-path" style="color: var(--neon-green); max-height: 400px; overflow-y: auto; white-space: pre-wrap;">{{ log.response }}</div>
+                  </div>
+                  {% endif %}
+
+                  {% if log.info.reference %}
+                  <div>
+                    <span class="vuln-meta-label" style="display: block; margin-bottom: 8px;">References</span>
+                    <ul style="margin: 0; padding-left: 0; list-style: none;">
+                      {% for ref in log.info.reference %}
+                        <li style="margin-bottom: 8px;">
+                          <a href="{{ ref }}" target="_blank" style="font-size: 12px; display: flex; align-items: center; gap: 8px;">
+                            <span style="color: var(--neon-cyan);">↗</span> {{ ref }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
                   </div>
                   {% endif %}
                 </div>
-
-                {% if log.info.reference %}
-                <div style="margin-top: 16px;">
-                  <span class="vuln-meta-label">References:</span>
-                  <ul style="margin: 8px 0; padding-left: 20px;">
-                    {% for ref in log.info.reference %}
-                      <li><a href="{{ ref }}" target="_blank" style="color: var(--text-dim); font-size: 12px;">{{ ref }}</a></li>
-                    {% endfor %}
-                  </ul>
-                </div>
-                {% endif %}
               </details>
             </div>
-
           </div>
         </article>
       {% endfor %}
     {% else %}
     <div class="panel-section">
       <div style="text-align: center; padding: 40px">
-        <p
-          style="
-            font-family: var(--font-hud);
-            font-size: 24px;
-            color: var(--text-dim);
-            margin-bottom: 16px;
-          "
-        >
-          NO_LOGS_AVAILABLE
-        </p>
+        <h3 class="section-title" style="margin-bottom: 16px; color: var(--text-dim);">NO_LOGS_AVAILABLE</h3>
         <p style="font-size: 14px; color: var(--text-dim)">
           The raw Nuclei output file could not be found or is empty.
         </p>

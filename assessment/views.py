@@ -166,6 +166,17 @@ def view_report(request, vuln_assessment_id):
                     stats["info"] += 1
                 stats["total"] += 1
 
+            # Extract all tags for the filter dropdown (before filtering)
+            all_tags = set()
+            for log in nuclei_logs:
+                tags = log.get("info", {}).get("tags", [])
+                if isinstance(tags, list):
+                    for tag in tags:
+                        all_tags.add(tag)
+
+            # Sort tags for display
+            all_tags = sorted(list(all_tags))
+
             # Filter by tag if requested
             tag_filter = request.GET.get("tag")
             if tag_filter:
@@ -173,12 +184,30 @@ def view_report(request, vuln_assessment_id):
                 tag_filter_lower = tag_filter.lower()
                 for log in nuclei_logs:
                     tags = log.get("info", {}).get("tags", [])
-                    # Handle if tags is valid list
                     if isinstance(tags, list):
                         for tag in tags:
                             if tag_filter_lower in str(tag).lower():
                                 filtered_logs.append(log)
                                 break
+                nuclei_logs = filtered_logs
+
+            # Filter by search query if requested
+            search_query = request.GET.get("search")
+            if search_query:
+                search_query_lower = search_query.lower()
+                filtered_logs = []
+                for log in nuclei_logs:
+                    # Check text fields
+                    name = log.get("info", {}).get("name", "").lower()
+                    template_id = log.get("template_id", "").lower()
+                    description = log.get("info", {}).get("description", "").lower()
+
+                    if (
+                        search_query_lower in name
+                        or search_query_lower in template_id
+                        or search_query_lower in description
+                    ):
+                        filtered_logs.append(log)
                 nuclei_logs = filtered_logs
 
             vuln_assessment.nuclei_results_file.close()
@@ -187,6 +216,8 @@ def view_report(request, vuln_assessment_id):
                 f"Error reading results file for assessment {vuln_assessment.id}: {e}"
             )
             tag_filter = None
+            search_query = None
+            all_tags = []
 
     template_name = "assessment/report.html"
     context = {
@@ -194,6 +225,8 @@ def view_report(request, vuln_assessment_id):
         "nuclei_logs": nuclei_logs,
         "stats": stats,
         "tag_filter": tag_filter,
+        "search_query": search_query,
+        "all_tags": all_tags,
     }
     return render(request, template_name, context)
 

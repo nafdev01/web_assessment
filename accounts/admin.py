@@ -11,15 +11,12 @@ class ClientAdmin(UserAdmin):
         "email",
         "first_name",
         "last_name",
-        "phone",
     )
     search_fields = (
         "username",
         "first_name",
         "last_name",
         "email",
-        "phone",
-        "address",
     )
     ordering = ("username",)
 

@@ -11,7 +11,7 @@
             <span class="section-badge">Login</span>
         </div>
 
-        <form method="post">
+        <form method="post" autocomplete="off">
             {% csrf_token %}
 
             {% if form.errors %}
@@ -29,7 +29,7 @@
                     placeholder="Enter username"
                     autofocus
                     autocapitalize="none"
-                    autocomplete="username"
+                    autocomplete="off"
                     maxlength="150"
                     required
                     id="id_username"
@@ -43,7 +43,7 @@
                     name="password"
                     class="form-control"
                     placeholder="Enter password"
-                    autocomplete="current-password"
+                    autocomplete="off"
                     required
                     id="id_password"
                 >

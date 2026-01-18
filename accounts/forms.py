@@ -13,8 +13,6 @@ class ClientRegistrationForm(UserCreationForm):
             "last_name",
             "username",
             "email",
-            "phone",
-            "address",
             "password1",
             "password2",
         ]
@@ -22,12 +20,20 @@ class ClientRegistrationForm(UserCreationForm):
             "username": None,
             "email": None,
         }
-        widgets = {
-            "address": forms.Textarea(attrs={"rows": 2}),
-        }
 
 
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
         fields = ("name", "email", "subject", "message")
+
+
+class ClientUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ["first_name", "last_name"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({"class": "form-control"})

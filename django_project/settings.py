@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     # custom apps
     "accounts",
     "assessment",
-    "django_bootstrap5",
+    "notifications",
     "django_extensions",
     # 3rd party
     "whitenoise.runserver_nostatic",
@@ -209,22 +209,49 @@ LOGGING = {
     },
     "loggers": {
         "django": {
-            "handlers": ["console", "info_file", "warning_file", "error_file", "critical_file"],
+            "handlers": [
+                "console",
+                "info_file",
+                "warning_file",
+                "error_file",
+                "critical_file",
+            ],
             "level": "INFO",
             "propagate": False,
         },
         "accounts": {
-            "handlers": ["console", "info_file", "debug_file", "warning_file", "error_file", "critical_file"],
+            "handlers": [
+                "console",
+                "info_file",
+                "debug_file",
+                "warning_file",
+                "error_file",
+                "critical_file",
+            ],
             "level": "DEBUG",
             "propagate": False,
         },
         "assessment": {
-            "handlers": ["console", "info_file", "debug_file", "warning_file", "error_file", "critical_file"],
+            "handlers": [
+                "console",
+                "info_file",
+                "debug_file",
+                "warning_file",
+                "error_file",
+                "critical_file",
+            ],
             "level": "DEBUG",
             "propagate": False,
         },
         "notifications": {
-            "handlers": ["console", "info_file", "debug_file", "warning_file", "error_file", "critical_file"],
+            "handlers": [
+                "console",
+                "info_file",
+                "debug_file",
+                "warning_file",
+                "error_file",
+                "critical_file",
+            ],
             "level": "DEBUG",
             "propagate": False,
         },

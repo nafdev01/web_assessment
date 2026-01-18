@@ -18,7 +18,9 @@
             <span class="stat-value {% if unread_count > 0 %}stat-alert{% endif %}">{{ unread_count }}</span>
         </div>
         {% if unread_count > 0 %}
-        <a href="?mark_all_read=true" class="btn-secondary">MARK_ALL_READ</a>
+        <a href="?mark_all_read=true" class="btn-secondary">
+            <i class="fas fa-check-double"></i> MARK_ALL_READ
+        </a>
         {% endif %}
     </div>
 
@@ -28,16 +30,19 @@
             <div class="notification-item {% if not notification.is_read %}notification-unread{% endif %} notification-{{ notification.notification_type }}">
                 <div class="notification-header">
                     <div class="notification-type-badge">
-                        {% if notification.notification_type == 'success' %}[✓]{% endif %}
-                        {% if notification.notification_type == 'info' %}[i]{% endif %}
-                        {% if notification.notification_type == 'warning' %}[!]{% endif %}
-                        {% if notification.notification_type == 'error' %}[X]{% endif %}
-                        {{ notification.notification_type|upper }}
+                        {% if notification.notification_type == 'success' %}<i class="fas fa-check-circle" style="color: var(--neon-green)"></i> SYSTEM_SUCCESS{% endif %}
+                        {% if notification.notification_type == 'info' %}<i class="fas fa-info-circle" style="color: var(--neon-cyan)"></i> SYSTEM_INFO{% endif %}
+                        {% if notification.notification_type == 'warning' %}<i class="fas fa-exclamation-triangle" style="color: var(--neon-yellow)"></i> SYSTEM_WARNING{% endif %}
+                        {% if notification.notification_type == 'error' %}<i class="fas fa-times-circle" style="color: var(--neon-pink)"></i> SYSTEM_ERROR{% endif %}
                     </div>
-                    <div class="notification-time">{{ notification.created_at|date:"Y-m-d H:i:s" }}</div>
-                    {% if not notification.is_read %}
-                    <a href="?mark_read={{ notification.id }}" class="notification-mark-read">MARK_READ</a>
-                    {% endif %}
+                    <div class="notification-time">
+                        <i class="far fa-clock"></i> {{ notification.created_at|date:"Y-m-d H:i:s" }}
+                        {% if not notification.is_read %}
+                        <a href="?mark_read={{ notification.id }}" class="notification-mark-read" title="Mark as read">
+                            <i class="fas fa-check"></i>
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="notification-title">{{ notification.title }}</div>
                 <div class="notification-message">{{ notification.message }}</div>
@@ -47,7 +52,7 @@
     {% else %}
         <div class="panel-section">
             <div class="empty-state">
-                <div class="empty-icon">[_]</div>
+                <div class="empty-icon"><i class="fas fa-inbox"></i></div>
                 <div class="empty-text">NO_NOTIFICATIONS_FOUND</div>
                 <div class="empty-subtext">System message queue is empty</div>
             </div>

@@ -10,7 +10,7 @@
             <span class="section-badge">Register</span>
         </div>
 
-        <form method="post">
+        <form method="post" autocomplete="off">
             {% csrf_token %}
 
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
@@ -69,38 +69,13 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
-                <div class="input-wrapper">
-                    <label for="{{ form.phone.id_for_label }}" class="input-label">Phone</label>
-                    <input type="text" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}"
-                        class="form-control" placeholder="+1234567890"
-                        {% if form.phone.value %}value="{{ form.phone.value }}"{% endif %}
-                        {% if form.phone.field.required %}required{% endif %}>
-                    {% if form.phone.errors %}
-                        <ul class="errorlist">
-                            {% for error in form.phone.errors %}<li>{{ error }}</li>{% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-
-                <div class="input-wrapper">
-                    <label for="{{ form.address.id_for_label }}" class="input-label">Address</label>
-                    <textarea name="{{ form.address.name }}" id="{{ form.address.id_for_label }}" rows="2"
-                        class="form-control" placeholder="Your address"
-                        {% if form.address.field.required %}required{% endif %}>{% if form.address.value %}{{ form.address.value }}{% endif %}</textarea>
-                    {% if form.address.errors %}
-                        <ul class="errorlist">
-                            {% for error in form.address.errors %}<li>{{ error }}</li>{% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-            </div>
 
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
                 <div class="input-wrapper">
                     <label for="{{ form.password1.id_for_label }}" class="input-label">Password</label>
                     <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}"
                         class="form-control" placeholder="Enter password"
+                        autocomplete="new-password"
                         {% if form.password1.field.required %}required{% endif %}>
                     {% if form.password1.errors %}
                         <ul class="errorlist">
@@ -113,6 +88,7 @@
                     <label for="{{ form.password2.id_for_label }}" class="input-label">Confirm Password</label>
                     <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}"
                         class="form-control" placeholder="Confirm password"
+                        autocomplete="new-password"
                         {% if form.password2.field.required %}required{% endif %}>
                     {% if form.password2.errors %}
                         <ul class="errorlist">

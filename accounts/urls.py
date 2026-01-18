@@ -10,5 +10,6 @@ urlpatterns = [
     path("log_out/", log_out, name="log_out"),
     path("signup/", register, name="signup"),
     path("contact/", contact, name="contact"),
+    path("profile/", profile, name="profile"),
     path("", include(auth_urls)),
 ]

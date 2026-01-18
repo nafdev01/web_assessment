@@ -1,0 +1,34 @@
+Template Name,Severity,Host,Type,Matched-At
+Missing Subresource Integrity,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+WAF Detection,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+SSH SHA-1 HMAC Algorithms Enabled,info,naftalmatoya.tech:22,javascript,naftalmatoya.tech:22
+SSH Server Software Enumeration,info,naftalmatoya.tech:22,javascript,naftalmatoya.tech:22
+SSH Auth Methods - Detection,info,naftalmatoya.tech:22,javascript,naftalmatoya.tech:22
+OpenSSH Service - Detect,info,naftalmatoya.tech:22,tcp,naftalmatoya.tech:22
+TLS Version - Detect,info,naftalmatoya.tech,ssl,naftalmatoya.tech:443
+TLS Version - Detect,info,naftalmatoya.tech,ssl,naftalmatoya.tech:443
+robots.txt file,info,naftalmatoya.tech,http,https://naftalmatoya.tech/robots.txt
+OpenResty detection,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+RDAP WHOIS,info,naftalmatoya.tech,http,https://rdap.centralnic.com/tech/domain/naftalmatoya.tech
+RDAP WHOIS,info,naftalmatoya.tech,http,https://rdap.centralnic.com/tech/domain/naftalmatoya.tech
+RDAP WHOIS,info,naftalmatoya.tech,http,https://rdap.centralnic.com/tech/domain/naftalmatoya.tech
+RDAP WHOIS,info,naftalmatoya.tech,http,https://rdap.centralnic.com/tech/domain/naftalmatoya.tech
+RDAP WHOIS,info,naftalmatoya.tech,http,https://rdap.centralnic.com/tech/domain/naftalmatoya.tech
+RDAP WHOIS,info,naftalmatoya.tech,http,https://rdap.centralnic.com/tech/domain/naftalmatoya.tech
+robots.txt endpoint prober,info,naftalmatoya.tech,http,https://naftalmatoya.tech/robots.txt
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+HTTP Missing Security Headers,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+Wappalyzer Technology Detection,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+Wappalyzer Technology Detection,info,naftalmatoya.tech,http,https://naftalmatoya.tech
+NS Record Detection,info,naftalmatoya.tech,dns,naftalmatoya.tech
+CAA Record,info,naftalmatoya.tech,dns,naftalmatoya.tech
+Detect SSL Certificate Issuer,info,naftalmatoya.tech,ssl,naftalmatoya.tech:443
+SSL DNS Names,info,naftalmatoya.tech,ssl,naftalmatoya.tech:443

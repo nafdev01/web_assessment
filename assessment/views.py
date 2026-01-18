@@ -110,6 +110,15 @@ def view_report(request, vuln_assessment_id):
     )
 
     nuclei_logs = []
+    stats = {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "total": 0,
+    }
+
     if vuln_assessment.nuclei_results_file:
         try:
             vuln_assessment.nuclei_results_file.open("rb")
@@ -119,19 +128,33 @@ def view_report(request, vuln_assessment_id):
             for line in content.splitlines():
                 if line.strip():
                     try:
-                        obj = json.loads(line)
-                        nuclei_logs.append(json.dumps(obj, indent=4))
+                        log_entry = json.loads(line)
+                        nuclei_logs.append(log_entry)
+
+                        # Calculate Stats
+                        severity = (
+                            log_entry.get("info", {}).get("severity", "info").lower()
+                        )
+                        if severity in stats:
+                            stats[severity] += 1
+                        else:
+                            stats["info"] += 1
+                        stats["total"] += 1
+
                     except json.JSONDecodeError:
-                        nuclei_logs.append(line)
+                        continue
             vuln_assessment.nuclei_results_file.close()
         except Exception as e:
             logger.error(
                 f"Error reading results file for assessment {vuln_assessment.id}: {e}"
             )
-            nuclei_logs.append("Error reading result file or file not found.")
 
     template_name = "assessment/report.html"
-    context = {"assessment": vuln_assessment, "nuclei_logs": nuclei_logs}
+    context = {
+        "assessment": vuln_assessment,
+        "nuclei_logs": nuclei_logs,
+        "stats": stats,
+    }
     return render(request, template_name, context)
 
 

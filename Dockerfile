@@ -17,7 +17,16 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     musl-dev \
     libpq-dev \
+    curl \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Nuclei
+RUN curl -L -O https://github.com/projectdiscovery/nuclei/releases/download/v3.6.2/nuclei_3.6.2_linux_amd64.zip \
+    && unzip nuclei_3.6.2_linux_amd64.zip \
+    && mv nuclei /usr/local/bin/ \
+    && rm nuclei_3.6.2_linux_amd64.zip \
+    && nuclei -version
 
 # Copy requirements first for better caching
 COPY requirements.txt .

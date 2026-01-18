@@ -47,11 +47,17 @@ docker-compose up -d --build
 
 This will start:
 
-- **PostgreSQL** database (port 5432)
-- **Redis** server (port 6379)
-- **Django web** application (port 8000)
-- **Celery worker** for background tasks
-- **Celery beat** for scheduled tasks
+- **PostgreSQL** database (internal network only, no external ports)
+- **Redis** server (internal network only, no external ports)
+- **Django web** application (port 8000, exposed to localhost only)
+- **Celery worker** for background tasks (internal network only)
+- **Celery beat** for scheduled tasks (internal network only)
+
+**Security Features:**
+
+- All services communicate on an isolated Docker network (`${DOCKER_NETWORK_NAME}` from `.env`)
+- Only the web application is accessible from the host machine (via localhost:8000)
+- Database and Redis are NOT exposed to external networks for enhanced security
 
 ### 3. Access the Application
 
@@ -176,12 +182,16 @@ docker-compose up -d --build
 
 ## Environment Variables Reference
 
+### Docker Configuration
+
+- `DOCKER_NETWORK_NAME` - Name of the internal Docker network (default: web_assessment_network)
+- `WEB_PORT` - Web application port exposed to localhost (default: 8000)
+
 ### PostgreSQL Configuration
 
 - `POSTGRES_DB` - Database name
 - `POSTGRES_USER` - Database user
 - `POSTGRES_PASSWORD` - Database password
-- `POSTGRES_PORT` - PostgreSQL port (default: 5432)
 
 ### Redis Configuration
 
@@ -210,11 +220,41 @@ docker-compose up -d --build
 - `EMAIL_USE_TLS` - Use TLS (True/False)
 - `DEFAULT_FROM_EMAIL` - Default sender email
 
-### Port Mappings
+## Network Security
 
-- `WEB_PORT` - Web application port (default: 8000)
-- `POSTGRES_PORT` - PostgreSQL port mapping (default: 5432)
-- `REDIS_PORT` - Redis port mapping (default: 6379)
+This Docker setup implements security best practices:
+
+### Isolated Internal Network
+
+All services communicate on a private Docker network named via `${DOCKER_NETWORK_NAME}` (default: `web_assessment_network`). This ensures:
+
+- Container-to-container communication is isolated from external networks
+- Database and Redis are not accessible from outside the Docker network
+- Attack surface is minimized
+
+### Port Exposure
+
+- **Web Application**: Only exposed to `127.0.0.1:8000` (localhost only)
+  - Not accessible from external networks by default
+  - To allow external access, change in `docker-compose.yml`: `"0.0.0.0:${WEB_PORT}:8000"`
+- **PostgreSQL**: No external port exposure
+  - Only accessible within the Docker network
+  - Direct database access requires `docker-compose exec db psql ...`
+- **Redis**: No external port exposure
+  - Only accessible within the Docker network
+  - Direct Redis access requires `docker-compose exec redis redis-cli`
+
+### Accessing Internal Services
+
+To access PostgreSQL or Redis from outside Docker (e.g., for debugging):
+
+```bash
+# PostgreSQL
+docker-compose exec db psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+
+# Redis
+docker-compose exec redis redis-cli
+```
 
 ## Troubleshooting
 
@@ -224,16 +264,6 @@ If you see database connection errors, ensure PostgreSQL is ready:
 
 ```bash
 docker-compose logs db
-```
-
-### Port Already in Use
-
-If port 8000, 5432, or 6379 is already in use, change the port in `.env`:
-
-```bash
-WEB_PORT=8001
-POSTGRES_PORT=5433
-REDIS_PORT=6380
 ```
 
 ### Reset Database

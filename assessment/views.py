@@ -125,35 +125,75 @@ def view_report(request, vuln_assessment_id):
             content = vuln_assessment.nuclei_results_file.read().decode(
                 "utf-8", errors="replace"
             )
-            for line in content.splitlines():
-                if line.strip():
-                    try:
-                        log_entry = json.loads(line)
-                        nuclei_logs.append(log_entry)
 
-                        # Calculate Stats
-                        severity = (
-                            log_entry.get("info", {}).get("severity", "info").lower()
-                        )
-                        if severity in stats:
-                            stats[severity] += 1
-                        else:
-                            stats["info"] += 1
-                        stats["total"] += 1
+            # Try parsing as a single JSON array first (Nuclei JSON export)
+            try:
+                data = json.loads(content)
+                if isinstance(data, list):
+                    nuclei_logs = data
+                else:
+                    nuclei_logs = [data]
+            except json.JSONDecodeError:
+                # Fallback to JSONL (line by line)
+                nuclei_logs = []
+                for line in content.splitlines():
+                    if line.strip():
+                        try:
+                            log_entry = json.loads(line)
+                            nuclei_logs.append(log_entry)
+                        except json.JSONDecodeError:
+                            continue
 
-                    except json.JSONDecodeError:
-                        continue
+            # Normalize keys for Django templates (replace hyphens with underscores)
+            def normalize_keys(obj):
+                if isinstance(obj, dict):
+                    return {
+                        k.replace("-", "_"): normalize_keys(v) for k, v in obj.items()
+                    }
+                elif isinstance(obj, list):
+                    return [normalize_keys(i) for i in obj]
+                else:
+                    return obj
+
+            nuclei_logs = normalize_keys(nuclei_logs)
+
+            # Calculate Stats (using normalized keys)
+            for log_entry in nuclei_logs:
+                severity = log_entry.get("info", {}).get("severity", "info").lower()
+                if severity in stats:
+                    stats[severity] += 1
+                else:
+                    stats["info"] += 1
+                stats["total"] += 1
+
+            # Filter by tag if requested
+            tag_filter = request.GET.get("tag")
+            if tag_filter:
+                filtered_logs = []
+                tag_filter_lower = tag_filter.lower()
+                for log in nuclei_logs:
+                    tags = log.get("info", {}).get("tags", [])
+                    # Handle if tags is valid list
+                    if isinstance(tags, list):
+                        for tag in tags:
+                            if tag_filter_lower in str(tag).lower():
+                                filtered_logs.append(log)
+                                break
+                nuclei_logs = filtered_logs
+
             vuln_assessment.nuclei_results_file.close()
         except Exception as e:
             logger.error(
                 f"Error reading results file for assessment {vuln_assessment.id}: {e}"
             )
+            tag_filter = None
 
     template_name = "assessment/report.html"
     context = {
         "assessment": vuln_assessment,
         "nuclei_logs": nuclei_logs,
         "stats": stats,
+        "tag_filter": tag_filter,
     }
     return render(request, template_name, context)
 

@@ -15,12 +15,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-%qk3bq(i7+_((8*z+#sz^l=bj432=a+ntwt(1u4b-m&m8(#h^6"
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-%qk3bq(i7+_((8*z+#sz^l=bj432=a+ntwt(1u4b-m&m8(#h^6",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = ["*"]
+# Parse ALLOWED_HOSTS from environment variable (comma-separated)
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
 # Application definition
 
@@ -30,10 +34,10 @@ INSTALLED_APPS = [
     "assessment",
     "notifications",
     "django_extensions",
+    "whitenoise.runserver_nostatic",
     "daphne",
     # 3rd party
     "channels",
-    "whitenoise.runserver_nostatic",
     # default apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -45,8 +49,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -72,7 +76,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = "django_project.wsgi.application"
+ASGI_APPLICATION = "django_project.asgi.application"
 
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
@@ -122,6 +126,16 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+# WhiteNoise configuration
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # media files
 MEDIA_URL = "/media/"
@@ -266,23 +280,24 @@ LOGGING = {
 
 
 # Celery settings
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
 
 SITE_URL = os.getenv("SITE_URL")
 
 if not SITE_URL:
     raise ValueError("SITE_URL environment variable is not set")
 
-# ASGI Configuration for Channels
-ASGI_APPLICATION = "django_project.asgi.application"
 
 # Channel Layers Configuration
+REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
+REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
         },
     },
 }

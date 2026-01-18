@@ -26,7 +26,8 @@ RUN curl -L -O https://github.com/projectdiscovery/nuclei/releases/download/v3.6
     && unzip nuclei_3.6.2_linux_amd64.zip \
     && mv nuclei /usr/local/bin/ \
     && rm nuclei_3.6.2_linux_amd64.zip \
-    && nuclei -version
+    && nuclei -version \
+    && nuclei -ut
 
 # Copy requirements first for better caching
 COPY requirements.txt .

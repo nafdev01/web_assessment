@@ -121,6 +121,8 @@ services:
 networks:
   web_assessment_network:
     external: true
+    # add a block for getting from .env or defaulting to web_assessment_network
+    name: ${DOCKER_NETWORK_NAME}
 
 volumes:
   postgres_data:

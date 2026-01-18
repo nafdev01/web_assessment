@@ -13,6 +13,7 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     postgresql-client \
+    redis-tools \
     gcc \
     python3-dev \
     libpq-dev \

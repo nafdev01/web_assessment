@@ -1,6 +1,6 @@
 services:
   # PostgreSQL Database
-  db:
+  web_assessment_db:
     image: postgres:17-alpine
     container_name: web_assessment_db
     volumes:
@@ -14,14 +14,14 @@ services:
     networks:
       - web_assessment_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
     restart: unless-stopped
 
   # Redis for Celery and Channels
-  redis:
+  web_assessment_redis:
     image: redis:8.0.2-alpine
     container_name: web_assessment_redis
     volumes:
@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
 
   # Django Web Application
-  web:
+  web_assessment_web:
     build:
       context: .
       dockerfile: Dockerfile
@@ -51,22 +51,22 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - REDIS_HOST=redis
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@web_assessment_db:5432/${POSTGRES_DB}
+      - CELERY_BROKER_URL=redis://web_assessment_redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://web_assessment_redis:6379/0
+      - REDIS_HOST=web_assessment_redis
       - REDIS_PORT=6379
     networks:
       - web_assessment_network
     depends_on:
-      db:
+      web_assessment_db:
         condition: service_healthy
-      redis:
+      web_assessment_redis:
         condition: service_healthy
     restart: unless-stopped
 
   # Celery Worker
-  celery_worker:
+  web_assessment_celery_worker:
     build:
       context: .
       dockerfile: Dockerfile
@@ -78,22 +78,22 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - REDIS_HOST=redis
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@web_assessment_db:5432/${POSTGRES_DB}
+      - CELERY_BROKER_URL=redis://web_assessment_redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://web_assessment_redis:6379/0
+      - REDIS_HOST=web_assessment_redis
       - REDIS_PORT=6379
     networks:
       - web_assessment_network
     depends_on:
-      db:
+      web_assessment_db:
         condition: service_healthy
-      redis:
+      web_assessment_redis:
         condition: service_healthy
     restart: unless-stopped
 
   # Celery Beat (for scheduled tasks)
-  celery_beat:
+  web_assessment_celery_beat:
     build:
       context: .
       dockerfile: Dockerfile
@@ -104,24 +104,23 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - REDIS_HOST=redis
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@web_assessment_db:5432/${POSTGRES_DB}
+      - CELERY_BROKER_URL=redis://web_assessment_redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://web_assessment_redis:6379/0
+      - REDIS_HOST=web_assessment_redis
       - REDIS_PORT=6379
     networks:
       - web_assessment_network
     depends_on:
-      db:
+      web_assessment_db:
         condition: service_healthy
-      redis:
+      web_assessment_redis:
         condition: service_healthy
     restart: unless-stopped
 
 networks:
   web_assessment_network:
     external: true
-    # add a block for getting from .env or defaulting to web_assessment_network
     name: ${DOCKER_NETWORK_NAME}
 
 volumes:

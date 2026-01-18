@@ -1,33 +1,32 @@
 {% extends "base.html" %}
 {% load static %}
-{% load django_bootstrap5 %}
 
 {% block title %}Log in{% endblock %}
 
 
 {% block content %}
-<section class="d-flex justify-content-center pt-4 row">
-	<div class="col-5">
-		<h2 class="text-center display-4">Log in</h2>
-		<form class="mb-3" method="post">
+<section class="min-h-screen flex items-center justify-center py-12 px-4">
+	<div class="w-full max-w-md">
+		<h2 class="text-3xl font-bold text-center mb-8">Log in</h2>
+		<form class="space-y-4" method="post">
 			{% csrf_token %}
-			<div class="mb-3">
+			<div>
 				<input type="text" name="username" autofocus autocapitalize="none" autocomplete="username"
-					maxlength="150" class="form-control form-control-sm" placeholder="Username" required
+					maxlength="150" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Username" required
 					id="id_username">
 			</div>
-			<div class="mb-3">
-				<input type="password" name="password" autocomplete="current-password" class="form-control"
+			<div>
+				<input type="password" name="password" autocomplete="current-password" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
 					placeholder="Password" required id="id_password">
 			</div>
-			<div class="mbr-section-btn mt-3 d-flex justify-content-center">
-				<button id="login-button" class="btn btn-success display-7" type="submit">Login</button>
+			<div class="flex justify-center">
+				<button id="login-button" class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition" type="submit">Login</button>
 			</div>
 		</form>
-		<div class="d-flex flex-column justify-content-center pt-4">
-			<a class="btn link-warning" href="{% url 'password_reset' %}">Forgot your password?</a>
-			<p class="text-center">or</p>
-			<a class="btn link-success" href="{% url 'signup' %}">Already have an account? Register here</a>
+		<div class="flex flex-col items-center space-y-2 pt-6">
+			<a class="text-yellow-600 hover:text-yellow-700 transition" href="{% url 'password_reset' %}">Forgot your password?</a>
+			<p class="text-gray-600">or</p>
+			<a class="text-green-600 hover:text-green-700 transition" href="{% url 'signup' %}">Don't have an account? Register here</a>
 		</div>
 	</div>
 </section>

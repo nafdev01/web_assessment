@@ -4,15 +4,15 @@
 {% block title %}Assess URL{% endblock title %}
 
 {% block content %}
-<div class="d-flex align-items-center justify-content-center vh-100">
-    <form action="" method="post">
+<div class="min-h-screen flex items-center justify-center px-4">
+    <form action="" method="post" class="w-full max-w-2xl">
         {% csrf_token %}
-        <div class="form-group">
-            <div class="input-group mb-3">
-                <input id="url-input" type="url" name="url_here" placeholder="Enter url here" class="form-control"
-                    aria-label="Url to test" aria-describedby="test-btn" required>
-                <button class="btn btn-success" id="test-btn" type="submit">Test</button>
-            </div>
+        <div class="flex">
+            <input id="url-input" type="url" name="url_here" placeholder="Enter url here" 
+                class="flex-1 px-4 py-3 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-green-500"
+                aria-label="Url to test" aria-describedby="test-btn" required>
+            <button class="px-6 py-3 bg-green-600 text-white rounded-r hover:bg-green-700 transition" 
+                id="test-btn" type="submit">Test</button>
         </div>
     </form>
 </div>

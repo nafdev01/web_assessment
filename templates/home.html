@@ -3,27 +3,25 @@
 {% load django_bootstrap5 %}
 
 {% block content %}
-<section data-bs-version="5.1" class="header2 structurem5 cid-tmYQUHz5hH mbr-fullscreen" id="aheader2-2">
-    <div class="mbr-overlay" style="opacity: 0.5; background-color: rgb(255, 255, 255);"></div>
-    <div class="section-border-item section-border-item_top"></div>
-    <div class="section-border-item section-border-item_bottom"></div>
-    <div class="container-fluid">
-        <div class="row justify-content-start">
-            <div class="col-12 col-lg-8">
-                <h1 class="mbr-section-title mbr-fonts-style mb-0 display-2">Unleashing Cybersecurity Excellence</h1>
-                <h2 class="mbr-section-subtitle mbr-fonts-style mb-0 display-3">Your Trusted Web Application Security
+<section class="relative min-h-screen flex items-center" id="aheader2-2">
+    <div class="absolute inset-0 bg-white opacity-50"></div>
+    <div class="relative z-10 container mx-auto px-4 py-16">
+        <div class="flex justify-start">
+            <div class="w-full lg:w-2/3">
+                <h1 class="text-5xl lg:text-6xl font-bold mb-4">Unleashing Cybersecurity Excellence</h1>
+                <h2 class="text-3xl lg:text-4xl font-semibold mb-4">Your Trusted Web Application Security
                     Assessment Platform</h2>
-                <p class="mbr-text mbr-fonts-style mb-0 display-4">
+                <p class="text-lg lg:text-xl mb-6">
                     Our platform empowers you to identify vulnerabilities, mitigate risks, and enhance your
                     cybersecurity posture. Stay one step ahead of threats and ensure the integrity of your web
                     applications.</p>
-                <div class="mbr-section-btn mt-3">
+                <div class="mt-6">
                     {% if user.is_authenticated %}
-                    <a class="btn btn-info display-4" href="{% url 'assess_site' %}">
+                    <a class="inline-block px-6 py-3 bg-blue-600 text-white text-lg rounded hover:bg-blue-700 transition" href="{% url 'assess_site' %}">
                         Start Assessment
                     </a>
                     {% else %}
-                    <a class="btn btn-info display-4" href="{% url 'signup' %}">
+                    <a class="inline-block px-6 py-3 bg-blue-600 text-white text-lg rounded hover:bg-blue-700 transition" href="{% url 'signup' %}">
                         Get Started
                     </a>
                     {% endif %}
@@ -32,168 +30,155 @@
         </div>
     </div>
 </section>
-<section data-bs-version="5.1" class="features1 structurem5 cid-tmYS81vPFo" id="afeatures1-3">
-    <div class="section-border-item section-border-item_top"></div>
-    <div class="section-border-item section-border-item_center"></div>
-    <div class="section-border-item section-border-item_bottom"></div>
-    <div class="container-fluid" id="services">
-        <div class="main-container">
-            <div class="card-wrap">
-                <div class="card-box">
-                    <h4 class="card-title mbr-fonts-style mb-0 display-5">What We Offer</h4>
-                    <p class="mbr-text mbr-fonts-style mb-0 display-7">
+<section class="py-16 bg-gray-50" id="services">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div class="space-y-6">
+                <div class="space-y-4">
+                    <h4 class="text-3xl font-bold text-gray-900">What We Offer</h4>
+                    <p class="text-lg text-gray-600">
                         Experience the power of proactive protection with our Web Application Security Assessment
                         Platform. Your security is our mission.
                     </p>
-                    <div class="counter-container">
-                        <div class="list">
-                            <div class="list-item">
-                                <div class="iconfont-wrapper">
-                                    <span class="mbr-iconfont mobi-mbri-success mobi-mbri"></span>
-                                </div>
-                                <p class="list-text mbr-fonts-style mb-0 display-7">
-                                    Website vulnerability scanning of your website to identify potential
-                                    vulnerabilities.
-                                </p>
-                            </div>
-                            <div class="list-item">
-                                <div class="iconfont-wrapper">
-                                    <span class="mbr-iconfont mobi-mbri-success mobi-mbri"></span>
-                                </div>
-                                <p class="list-text mbr-fonts-style mb-0 display-7">
-                                    Detailed reports and actionable recommendations for each identified vulnerability.
-                                </p>
-                            </div>
-                            <div class="list-item">
-                                <div class="iconfont-wrapper">
-                                    <span class="mbr-iconfont mobi-mbri-success mobi-mbri"></span>
-                                </div>
-                                <p class="list-text mbr-fonts-style mb-0 display-7">
-                                    Dedicated customer support from our team of cybersecurity experts.
-                                </p>
-                            </div>
-                            <div class="list-item">
-                                <div class="iconfont-wrapper">
-                                    <span class="mbr-iconfont mobi-mbri-success mobi-mbri"></span>
-                                </div>
-                                <p class="list-text mbr-fonts-style mb-0 display-7">
-                                    Timely email updates and notifications on your website's security status.
-                                </p>
-                            </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
                         </div>
+                        <p class="text-gray-700 flex-1">
+                            Website vulnerability scanning of your website to identify potential
+                            vulnerabilities.
+                        </p>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <p class="text-gray-700 flex-1">
+                            Detailed reports and actionable recommendations for each identified vulnerability.
+                        </p>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <p class="text-gray-700 flex-1">
+                            Dedicated customer support from our team of cybersecurity experts.
+                        </p>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <p class="text-gray-700 flex-1">
+                            Timely email updates and notifications on your website's security status.
+                        </p>
                     </div>
                 </div>
             </div>
-            <div class="image-wrapper">
-                <div class="img-box">
-                    <img src="{% static 'assets/web_assessment.jpeg' %}" alt="Web Assessment Platform">
-                </div>
+            <div class="flex items-center justify-center">
+                <img src="{% static 'assets/web_assessment.jpeg' %}" alt="Web Assessment Platform" class="rounded-lg shadow-lg w-full h-auto object-cover">
             </div>
         </div>
     </div>
 </section>
-<section data-bs-version="5.1" class="features3 structurem5 cid-tmYTdPVbXh" id="afeatures3-5">
-    <div class="section-border-item section-border-item_top"></div>
-    <div class="section-border-item section-border-item_bottom"></div>
-    <div class="container-fluid"> </div>
-    <div class="card-row">
-        <div class="card">
-            <div class="card-bg"></div>
-            <div class="card-wrap">
-                <div class="card-text-wrap">
-                    <p class="card-title mbr-fonts-style mb-0 display-5">
+<section class="py-16" id="afeatures3-5">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-bold text-gray-900">
                         Vulnerability
-                    </p>
-                    <p class="card-text mbr-fonts-style mb-0 display-7">
+                    </h3>
+                    <p class="text-gray-600">
                         Web application attacks are involved in 26% of all breaches, making them
                         the second most common attack pattern. Websites currently experience an average of 94 attacks
-                        every day, and are visited by bots approximately 2,608 times a week </p>
-                </div>
-                <div class="card-label-container">
-                    <a class="card-label mbr-fonts-style mb-0 display-7"
-                        href="https://expertinsights.com/insights/50-web-security-stats-you-should-know/">
-                        Read More
-                    </a>
+                        every day, and are visited by bots approximately 2,608 times a week
+                    </p>
+                    <div class="pt-2">
+                        <a class="text-blue-600 hover:text-blue-800 hover:underline transition"
+                            href="https://expertinsights.com/insights/50-web-security-stats-you-should-know/">
+                            Read More →
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card">
-            <div class="card-bg"></div>
-            <div class="card-wrap">
-                <div class="card-text-wrap">
-                    <p class="card-title mbr-fonts-style mb-0 display-5">
+            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-bold text-gray-900">
                         Risk
-                    </p>
-                    <p class="card-text mbr-fonts-style mb-0 display-7">
+                    </h3>
+                    <p class="text-gray-600">
                         Poor web application security can lead to the loss of sensitive data, interruptions in business
                         continuity, and other harmful results of cybercrime. In recent times, such attacks are on a
                         consistent upward trend, causing estimated losses of close to $6 trillion across industries.
                     </p>
-                </div>
-                <div class="card-label-container">
-                    <a href="https://hacken.io/discover/what-is-web-application-security-and-why-is-it-important/"
-                        class="card-label mbr-fonts-style mb-0 display-7">
-                        Read More
-                    </a>
+                    <div class="pt-2">
+                        <a href="https://hacken.io/discover/what-is-web-application-security-and-why-is-it-important/"
+                            class="text-blue-600 hover:text-blue-800 hover:underline transition">
+                            Read More →
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card">
-            <div class="card-bg"></div>
-            <div class="card-wrap">
-                <div class="card-text-wrap">
-                    <p class="card-title mbr-fonts-style mb-0 display-5">
+            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-bold text-gray-900">
                         Security
-                    </p>
-                    <p class="card-text mbr-fonts-style mb-0 display-7">
+                    </h3>
+                    <p class="text-gray-600">
                         The world has become more digital, technology is evolving quickly,
                         and security threats are evolving just as fast. It's important to stay ahead of these threats
                         to protect your web applications. Thats where we come in.
                     </p>
-                </div>
-                <div class="card-label-container">
-                    <a href="https://www.stackhawk.com/blog/importance-of-web-application-security-three-benefits/"
-                        class="card-label mbr-fonts-style mb-0 display-7">
-                        Read More
-                    </a>
+                    <div class="pt-2">
+                        <a href="https://www.stackhawk.com/blog/importance-of-web-application-security-three-benefits/"
+                            class="text-blue-600 hover:text-blue-800 hover:underline transition">
+                            Read More →
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<section data-bs-version="5.1" class="header2 structurem5 cid-tmYWN3vmKg" id="aheader2-e">
-    <div class="mbr-overlay" style="opacity: 0.8; background-color: rgb(0, 0, 0);"></div>
-    <div class="section-border-item section-border-item_top"></div>
-    <div class="section-border-item section-border-item_bottom"></div>
-    <div class="container-fluid">
-        <div class="row justify-content-center" id="contact">
-            <div class="col-12 col-lg-8">
-                <h1 class="mbr-section-title mbr-fonts-style mb-0 display-2">Contact Us</h1>
-                <form action="{% url 'contact' %}" method="post" role="form" class="mbr-text mbr-fonts-style mb-0 display-7">
-                    {% csrf_token %}
-                    <div class="row g-4">
-                        <div class="form-group col-md-6">
-                            <label for="name">Your Name</label>
-                            <input type="text" name="name" class="form-control" id="name" required>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="name">Your Email</label>
-                            <input type="email" class="form-control" name="email" id="email" required>
-                        </div>
+<section class="py-16 bg-gray-900 text-white" id="contact">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8 text-center">Contact Us</h1>
+            <form action="{% url 'contact' %}" method="post" role="form" class="space-y-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium mb-2">Your Name</label>
+                        <input type="text" name="name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" id="name" required>
                     </div>
-                    <div class="form-group">
-                        <label for="name">Subject</label>
-                        <input type="text" class="form-control" name="subject" id="subject" required>
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-2">Your Email</label>
+                        <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" name="email" id="email" required>
                     </div>
-                    <div class="form-group">
-                        <label for="name">Message</label>
-                        <textarea class="form-control" name="message" rows="6" required></textarea>
-                    </div>
-                    <div class="mbr-section-btn mt-3 d-flex justify-content-center">
-                        <button class="btn btn-info display-7" type="submit">Contact Us</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div>
+                    <label for="subject" class="block text-sm font-medium mb-2">Subject</label>
+                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" name="subject" id="subject" required>
+                </div>
+                <div>
+                    <label for="message" class="block text-sm font-medium mb-2">Message</label>
+                    <textarea class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" name="message" id="message" rows="6" required></textarea>
+                </div>
+                <div class="flex justify-center">
+                    <button class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition" type="submit">Contact Us</button>
+                </div>
+            </form>
         </div>
     </div>
 </section>

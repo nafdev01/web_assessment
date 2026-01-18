@@ -1,6 +1,7 @@
 import logging
 import json
 from io import BytesIO
+from PyPDF2 import PdfReader, PdfWriter
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -177,18 +178,48 @@ def view_report(request, vuln_assessment_id):
             # Sort tags for display
             all_tags = sorted(list(all_tags))
 
-            # Filter by tag if requested
-            tag_filter = request.GET.get("tag")
-            if tag_filter:
+            # Filter by tag if requested (OR logic)
+            selected_tags = request.GET.getlist("tag")
+            active_tag_filters = []
+
+            if selected_tags:
                 filtered_logs = []
-                tag_filter_lower = tag_filter.lower()
+                # Normalize selected tags for comparison
+                selected_tags_lower = {t.lower() for t in selected_tags}
+
+                # Prepare removal URLs for the frontend
+                params = request.GET.copy()
+                for tag in selected_tags:
+                    p = params.copy()
+                    current_list = p.getlist("tag")
+                    if tag in current_list:
+                        current_list.remove(tag)
+                    p.setlist("tag", current_list)
+                    active_tag_filters.append(
+                        {"name": tag, "remove_url": "?" + p.urlencode() if p else "?"}
+                    )
+
                 for log in nuclei_logs:
                     tags = log.get("info", {}).get("tags", [])
                     if isinstance(tags, list):
+                        match_found = False
                         for tag in tags:
-                            if tag_filter_lower in str(tag).lower():
-                                filtered_logs.append(log)
+                            if str(tag).lower() in selected_tags_lower:
+                                match_found = True
                                 break
+                        # If no strict match, check partials (legacy support)
+                        if not match_found:
+                            for tag in tags:
+                                t_str = str(tag).lower()
+                                for selected in selected_tags_lower:
+                                    if selected in t_str:
+                                        match_found = True
+                                        break
+                                if match_found:
+                                    break
+
+                        if match_found:
+                            filtered_logs.append(log)
                 nuclei_logs = filtered_logs
 
             # Filter by search query if requested
@@ -215,7 +246,8 @@ def view_report(request, vuln_assessment_id):
             logger.error(
                 f"Error reading results file for assessment {vuln_assessment.id}: {e}"
             )
-            tag_filter = None
+            selected_tags = []
+            active_tag_filters = []
             search_query = None
             all_tags = []
 
@@ -224,7 +256,8 @@ def view_report(request, vuln_assessment_id):
         "assessment": vuln_assessment,
         "nuclei_logs": nuclei_logs,
         "stats": stats,
-        "tag_filter": tag_filter,
+        "selected_tags": selected_tags,
+        "active_tag_filters": active_tag_filters,
         "search_query": search_query,
         "all_tags": all_tags,
     }
@@ -233,6 +266,18 @@ def view_report(request, vuln_assessment_id):
 
 @login_required
 def view_report_pdf(request, vuln_assessment_id):
+    # Enforce POST for password verification
+    if request.method != "POST":
+        messages.error(
+            request, "Please generate the report using the secure download button."
+        )
+        return redirect("view_report", vuln_assessment_id=vuln_assessment_id)
+
+    password = request.POST.get("password")
+    if not password or not request.user.check_password(password):
+        messages.error(request, "Invalid password. Report generation cancelled.")
+        return redirect("view_report", vuln_assessment_id=vuln_assessment_id)
+
     try:
         vuln_assessment = VulnAssessment.objects.get(id=vuln_assessment_id)
     except VulnAssessment.DoesNotExist:
@@ -295,23 +340,48 @@ def view_report_pdf(request, vuln_assessment_id):
             nuclei_logs = []  # Ensure it's empty on error
     # --- END: Load and Parse Nuclei Logs ---
 
-    template_name = "assessment/report-template.html"
+    report_type = request.POST.get("type", "technical")
+    if report_type == "simple":
+        template_name = "assessment/simple-report-template.html"
+        filename_suffix = "Simple_Report"
+    else:
+        template_name = "assessment/report-template.html"
+        filename_suffix = "Technical_Report"
+
     # Pass nuclei_logs instead of relying on assessment.vulnerabilities
     context = {"assessment": vuln_assessment, "nuclei_logs": nuclei_logs}
     html_string = render_to_string(template_name, context)
 
-    response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = (
-        f"inline; filename={request.user.get_full_name()}'s Report for {vuln_assessment.website}.pdf"
-    )
-    # xhtml2pdf handles CSS better if we link resources properly, but for now we rely on inline/CDN
-    pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), response)
+    # Generate PDF in memory
+    pdf_buffer = BytesIO()
+    pisa_status = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), pdf_buffer)
 
-    if not pdf.err:
-        logger.info(f"Successfully generated PDF for assessment {vuln_assessment_id}")
-        return response
-    else:
+    if pisa_status.err:
         logger.error(
-            f"Error rendering PDF for assessment {vuln_assessment_id}: {pdf.err}"
+            f"Error rendering PDF for assessment {vuln_assessment_id}: {pisa_status.err}"
         )
         return HttpResponse("Error Rendering PDF", status=400)
+
+    # Encrypt the PDF
+    pdf_buffer.seek(0)
+    reader = PdfReader(pdf_buffer)
+    writer = PdfWriter()
+
+    for page in reader.pages:
+        writer.add_page(page)
+
+    writer.encrypt(password)
+
+    output_buffer = BytesIO()
+    writer.write(output_buffer)
+    output_buffer.seek(0)
+
+    response = HttpResponse(output_buffer, content_type="application/pdf")
+    response["Content-Disposition"] = (
+        f"attachment; filename={request.user.get_full_name()}'s {filename_suffix} for {vuln_assessment.website}.pdf"
+    )
+
+    logger.info(
+        f"Successfully generated and encrypted PDF for assessment {vuln_assessment_id}"
+    )
+    return response

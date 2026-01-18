@@ -115,18 +115,6 @@
             border: 1px solid #eee;
         }
 
-        .code-block {
-            font-family: Courier, monospace;
-            background-color: #1c2128;
-            color: #f0f6fc;
-            padding: 8px;
-            font-size: 8pt;
-            border: 1px solid #333;
-            margin-top: 5px;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-        }
-
         .ref-list {
             margin-top: 5px;
             padding-left: 20px;
@@ -137,7 +125,7 @@
 </head>
 <body>
 
-    <h1>Technical Assessment Report</h1>
+    <h1>Simple Assessment Report</h1>
 
     <table class="info-table">
         <tr>
@@ -173,20 +161,12 @@
                 <div class="meta-row">
                     <span class="meta-key">Template ID:</span> {{ log.template_id }}
                 </div>
-                <div class="meta-row">
-                    <span class="meta-key">Type:</span> {{ log.type|upper }}
-                </div>
-                <div class="meta-row">
-                    <span class="meta-key">Matched At:</span> <a href="{{ log.matched_at }}">{{ log.matched_at }}</a>
-                </div>
+                <!-- Removed matched_at, type if not needed in simple -->
+                <!-- Simple report often just wants names and descriptions -->
+                
                 {% if log.host %}
                 <div class="meta-row">
                     <span class="meta-key">Host:</span> {{ log.host }}
-                </div>
-                {% endif %}
-                {% if log.ip %}
-                <div class="meta-row">
-                    <span class="meta-key">IP Address:</span> {{ log.ip }}
                 </div>
                 {% endif %}
 
@@ -196,30 +176,8 @@
                     {{ log.info.description }}
                 </div>
                 {% endif %}
-
-                {% if log.info.classification %}
-                <div style="margin-top: 10px;">
-                    <strong>Classification:</strong>
-                    <table style="width: 100%; font-size: 9pt; margin-top: 5px;">
-                    {% for key, value in log.info.classification.items %}
-                        {% if value %}
-                        <tr>
-                            <td width="150" style="color: #666;">{{ key|upper }}:</td>
-                            <td>{{ value }}</td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
-                    </table>
-                </div>
-                {% endif %}
-
-                {% if log.curl_command %}
-                <div style="margin-top: 10px;">
-                    <strong>Reproduction (cURL):</strong>
-                    <div class="code-block">{{ log.curl_command }}</div>
-                </div>
-                {% endif %}
-
+                
+                <!-- References are usually OK in simple reports -->
                 {% if log.info.reference %}
                 <div style="margin-top: 10px;">
                     <strong>References:</strong>

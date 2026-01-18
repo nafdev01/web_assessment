@@ -36,11 +36,49 @@
       </div>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
-      <a href="{% url 'view_report_pdf' assessment.id %}" class="btn-info">
-        DOWNLOAD_PDF
-      </a>
+    <div style="display: flex; justify-content: flex-end; margin-top: 24px; gap: 16px;">
+      <button type="button" onclick="openPdfModal('simple')" class="btn-primary btn-info">
+        SIMPLE_REPORT_[PDF]
+      </button>
+      <button type="button" onclick="openPdfModal('technical')" class="btn-primary btn-info">
+        TECHNICAL_REPORT_[PDF]
+      </button>
     </div>
+
+    <!-- Password Modal -->
+    <div id="pdf-password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
+      <form id="pdf-form" method="post" action="{% url 'view_report_pdf' assessment.id %}" style="background: var(--bg-panel); border: 1px solid var(--neon-cyan); padding: 32px; width: 400px; max-width: 90%; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);">
+        {% csrf_token %}
+        <h3 style="color: var(--neon-cyan); margin-bottom: 24px; font-family: var(--font-hud); letter-spacing: 2px;">SECURE DOWNLOAD</h3>
+        <p style="color: var(--text-dim); margin-bottom: 24px; font-size: 14px;">Enter your login password to encrypt and download the report.</p>
+        
+        <input type="hidden" name="type" id="pdf-type-input">
+        
+        <div style="margin-bottom: 24px;">
+          <label style="display: block; color: var(--text-bright); margin-bottom: 8px; font-size: 12px; font-family: var(--font-hud);">PASSWORD</label>
+          <input type="password" name="password" required class="form-control" style="width: 100%;">
+        </div>
+        
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+          <button type="button" onclick="document.getElementById('pdf-password-modal').style.display='none'" class="btn-secondary">CANCEL</button>
+          <button type="submit" class="btn-primary btn-info">DOWNLOAD_ENCRYPTED</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      function openPdfModal(type) {
+        document.getElementById('pdf-type-input').value = type;
+        document.getElementById('pdf-password-modal').style.display = 'flex';
+      }
+      
+      // Close modal if clicking outside
+      document.getElementById('pdf-password-modal').addEventListener('click', function(e) {
+          if (e.target === this) {
+              this.style.display = 'none';
+          }
+      });
+    </script>
   </section>
 
   <!-- Nuclei Logs Header & Filtering -->
@@ -48,7 +86,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
       <h3 class="results-title">Assessment Results</h3>
       <span class="results-count">
-        {% if search_query or tag_filter %}
+        {% if search_query or selected_tags %}
           FOUND: {{ nuclei_logs|length }}
         {% else %}
           TOTAL: {{ nuclei_logs|length }}
@@ -65,29 +103,200 @@
           <input type="text" name="search" class="form-control" placeholder="SEARCH BY NAME, ID, DESCRIPTION..." value="{{ search_query|default:'' }}">
         </div>
 
-        <!-- Tag Filter -->
-        <div style="flex: 1; min-width: 150px;">
-          <select name="tag" class="form-control" style="background-image: none; cursor: pointer;">
-            <option value="">-- ALL TAGS --</option>
+        <!-- Tag Filter (Combobox) -->
+        <div style="flex: 1; min-width: 250px; position: relative;">
+          <!-- Visible Input for Searching/Filtering -->
+          <div style="position: relative;">
+            <input 
+              type="text" 
+              id="tag-search-input" 
+              class="form-control" 
+              placeholder="SELECT TAGS..." 
+              autocomplete="off"
+              style="cursor: text;"
+            >
+            <div style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--neon-cyan);">
+              ▼
+            </div>
+          </div>
+
+          <!-- Dropdown Options -->
+          <div id="tag-dropdown" style="
+              display: none;
+              position: absolute; 
+              top: 100%; 
+              left: 0; 
+              width: 100%; 
+              max-height: 300px; 
+              overflow-y: auto; 
+              background: var(--bg-elevated); 
+              border: 1px solid var(--border-tech); 
+              border-top: none; 
+              z-index: 1000;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            ">
             {% for tag in all_tags %}
-              <option value="{{ tag }}" {% if tag == tag_filter %}selected{% endif %}>{{ tag }}</option>
+              <div 
+                class="combobox-option {% if tag in selected_tags %}selected{% endif %}" 
+                data-value="{{ tag }}"
+                style="
+                  padding: 10px 12px; 
+                  cursor: pointer; 
+                  font-family: var(--font-hud); 
+                  font-size: 12px; 
+                  color: var(--text-dim);
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  border-bottom: 1px solid rgba(255,255,255,0.05);
+                "
+              >
+                <span>{{ tag }}</span>
+                <span class="check-mark" style="color: var(--neon-green); {% if tag not in selected_tags %}display: none;{% endif %}">[x]</span>
+              </div>
             {% endfor %}
-          </select>
+            <div id="no-tags-found" style="display: none; padding: 12px; color: var(--text-dim); font-size: 12px; font-style: italic;">NO TAGS FOUND</div>
+          </div>
+
+          <!-- Hidden Inputs for Form Submission -->
+          <div id="hidden-tag-inputs">
+            {% for tag in selected_tags %}
+              <input type="hidden" name="tag" value="{{ tag }}">
+            {% endfor %}
+          </div>
         </div>
 
+        <script>
+          (function() {
+            const searchInput = document.getElementById('tag-search-input');
+            const dropdown = document.getElementById('tag-dropdown');
+            const options = dropdown.getElementsByClassName('combobox-option');
+            const hiddenInputsContainer = document.getElementById('hidden-tag-inputs');
+            const noTagsMsg = document.getElementById('no-tags-found');
+
+            // Toggle Dropdown
+            searchInput.addEventListener('focus', () => {
+              dropdown.style.display = 'block';
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+              if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+              }
+            });
+
+            // Filter Logic
+            searchInput.addEventListener('input', (e) => {
+              const term = e.target.value.toLowerCase();
+              let hasVisible = false;
+              
+              Array.from(options).forEach(opt => {
+                const text = opt.innerText.toLowerCase();
+                if (text.includes(term)) {
+                  opt.style.display = 'flex';
+                  hasVisible = true;
+                } else {
+                  opt.style.display = 'none';
+                }
+              });
+
+              noTagsMsg.style.display = hasVisible ? 'none' : 'block';
+              dropdown.style.display = 'block'; // Re-open if closed
+            });
+
+            // Selection Logic
+            Array.from(options).forEach(opt => {
+              // Initial Style Set
+              if (opt.classList.contains('selected')) {
+                opt.style.background = 'rgba(0, 227, 150, 0.1)';
+                opt.style.color = 'var(--neon-green)';
+              }
+
+              // Hover Effects
+              opt.addEventListener('mouseover', () => {
+                opt.style.background = 'var(--bg-panel)';
+                opt.style.color = 'var(--text-bright)';
+              });
+
+              opt.addEventListener('mouseout', () => {
+                if (opt.classList.contains('selected')) {
+                  opt.style.background = 'rgba(0, 227, 150, 0.1)';
+                  opt.style.color = 'var(--neon-green)';
+                } else {
+                  opt.style.background = 'transparent';
+                  opt.style.color = 'var(--text-dim)';
+                }
+              });
+
+              opt.addEventListener('click', () => {
+                const value = opt.dataset.value;
+                const isSelected = opt.classList.toggle('selected');
+                const check = opt.querySelector('.check-mark');
+
+                if (isSelected) {
+                  // Style - maintain hover/selected state immediately
+                  // Mouseover logic will take over if mouse is still there, 
+                  // but we set underlying state for mouseout
+                  check.style.display = 'block';
+                  
+                  // Add Hidden Input
+                  const input = document.createElement('input');
+                  input.type = 'hidden';
+                  input.name = 'tag';
+                  input.value = value;
+                  input.id = 'tag-input-' + value.replace(/[^a-zA-Z0-9]/g, '-');
+                  hiddenInputsContainer.appendChild(input);
+                } else {
+                  // Style
+                  check.style.display = 'none';
+                  
+                  // Remove Hidden Input
+                  const input = document.getElementById('tag-input-' + value.replace(/[^a-zA-Z0-9]/g, '-'));
+                  if (input) input.remove();
+                  // Fallback if ID generation failed (e.g. strict match)
+                  else {
+                     const inputs = hiddenInputsContainer.querySelectorAll('input[value="' + value.replace(/"/g, '\\"') + '"]');
+                     inputs.forEach(i => i.remove());
+                  }
+                }
+              });
+            });
+          })();
+        </script>
+
         <!-- Actions -->
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; align-items: flex-start;">
           <button type="submit" class="btn-primary">
-            SEARCH_LOGS
+            SEARCH_RESULTS
           </button>
-          
-          {% if search_query or tag_filter %}
-             <a href="?" class="btn-secondary" style="display: flex; align-items: center; justify-content: center;">
-               CLEAR
-             </a>
-          {% endif %}
         </div>
       </div>
+
+      <!-- Active Filter Badges -->
+      {% if search_query or selected_tags %}
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-tech); display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <span style="font-family: var(--font-hud); font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">Active Filters:</span>
+        
+        {% if search_query %}
+        <span class="section-badge" style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 8px; background: var(--bg-elevated); color: var(--neon-cyan); border: 1px solid var(--neon-cyan);">
+          SEARCH: "{{ search_query }}"
+          <a href="?{% for t in selected_tags %}tag={{ t }}&{% endfor %}" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; margin-left: 4px; font-size: 14px; line-height: 1;">✕</a>
+        </span>
+        {% endif %}
+
+        {% for tag_filter in active_tag_filters %}
+        <span class="section-badge" style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 8px; background: var(--bg-elevated); color: var(--neon-green); border: 1px solid var(--neon-green);">
+          TAG: "{{ tag_filter.name }}"
+          <a href="{{ tag_filter.remove_url }}{% if search_query %}&search={{ search_query }}{% endif %}" style="color: var(--neon-green); text-decoration: none; font-weight: bold; margin-left: 4px; font-size: 14px; line-height: 1;">✕</a>
+        </span>
+        {% endfor %}
+
+        <a href="?" class="section-badge" style="display: inline-flex; align-items: center; padding: 4px 8px; background: transparent; color: var(--neon-pink); border: 1px solid var(--neon-pink); text-decoration: none; cursor: pointer; margin-left: auto;">
+          [ CLEAR_ALL ]
+        </a>
+      </div>
+      {% endif %}
     </form>
   </div>
 

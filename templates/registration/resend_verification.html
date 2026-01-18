@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}>_ WVAT // Resend Verification{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="panel-section" style="max-width: 500px; margin: 80px auto;">
+        <div class="section-header">
+            <h2 class="section-title">Verify_Account</h2>
+            <span class="section-badge">Resend_Email</span>
+        </div>
+
+        <form method="post" autocomplete="off">
+            {% csrf_token %}
+
+            <div class="input-wrapper">
+                <label class="input-label" for="id_email">Email Address</label>
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    placeholder="Enter associated email"
+                    required
+                    id="id_email"
+                >
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 32px;">
+                <button type="submit" class="btn-execute">
+                    SEND_LINK
+                </button>
+            </div>
+        </form>
+
+        <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-tech);">
+            <a href="{% url 'login' %}" style="font-family: var(--font-hud); font-size: 12px; color: var(--text-dim);">
+                BACK_TO_LOGIN
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock content %}

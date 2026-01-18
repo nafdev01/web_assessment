@@ -11,5 +11,7 @@ urlpatterns = [
     path("signup/", register, name="signup"),
     path("contact/", contact, name="contact"),
     path("profile/", profile, name="profile"),
+    path("verify-email/<uuid:token>/", verify_email, name="verify_email"),
+    path("resend-verification/", resend_verification_email, name="resend_verification"),
     path("", include(auth_urls)),
 ]

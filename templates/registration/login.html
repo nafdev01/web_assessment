@@ -50,9 +50,14 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px;">
-                <a href="{% url 'password_reset' %}" style="font-family: var(--font-hud); font-size: 12px;">
-                    Reset_Password
-                </a>
+                <div style="display: flex; gap: 16px;">
+                    <a href="{% url 'password_reset' %}" style="font-family: var(--font-hud); font-size: 12px;">
+                        Reset_Password
+                    </a>
+                    <a href="{% url 'resend_verification' %}" style="font-family: var(--font-hud); font-size: 12px;">
+                        Resend_Verification
+                    </a>
+                </div>
                 <button type="submit" class="btn-execute">
                     AUTHENTICATE
                 </button>

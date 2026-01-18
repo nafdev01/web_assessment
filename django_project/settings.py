@@ -7,7 +7,6 @@ load_dotenv()
 
 import dj_database_url
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -267,3 +266,8 @@ LOGGING = {
 # Celery settings
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
+SITE_URL = os.getenv("SITE_URL")
+
+if not SITE_URL:
+    raise ValueError("SITE_URL environment variable is not set")

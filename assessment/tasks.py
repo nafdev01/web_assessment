@@ -1,11 +1,12 @@
 import logging
 import subprocess
+import os
 
 from celery import shared_task
 
 from assessment.assess import (
-    create_found_vulnerabilities,
-    get_search_output,
+    get_nuclei_output,
+    save_vuln_assessment_results,
     send_successful_assessment_email,
 )
 from assessment.models import VulnAssessment
@@ -23,61 +24,67 @@ def conduct_assessment(detail_url, vuln_assessment_id):
         logger.error(f"Assessment {vuln_assessment_id} not found in database")
         return
 
-    logger.info(f"Running Wapiti scan for website: {vuln_assessment.website}")
+    # Get temporary file path for nuclei to save results
+    temp_results_path = vuln_assessment.get_temp_results_path()
+    logger.info(f"Running Nuclei scan for website: {vuln_assessment.website}")
+    logger.info(f"Temporary results path: {temp_results_path}")
     
+    # Run nuclei command - saves to temp file first
     command = [
-        "wapiti",
+        "nuclei",
         "-u",
-        f"{vuln_assessment.website}",
-        "-o",
-        "feed.json",
-        "--format",
-        "json",
-        "--format",
-        "json",
-        "--flush-session",
-        "-m",
-        "backup,cookieflags,crlf,csp,csrf,htaccess,http_headers,methods,nikto,redirect,xss,xxe",
+        vuln_assessment.website,
+        "-je",
+        temp_results_path,
     ]
 
+    logger.info(f"Executing command: {' '.join(command)}")
     result = subprocess.run(command, capture_output=True, text=True)
 
     # Check if the command was successful
     if result.returncode == 0:
-        logger.info(f"Wapiti scan completed successfully for {vuln_assessment.website}")
-        _search_output = result.stdout
+        logger.info(f"Nuclei scan completed successfully for {vuln_assessment.website}")
     else:
-        _search_output = "Command failed"
-        logger.error(f"Wapiti command failed with return code {result.returncode}: {result.stderr}")
+        logger.warning(f"Nuclei command completed with return code {result.returncode}")
+        if result.stderr:
+            logger.debug(f"Nuclei stderr: {result.stderr}")
 
+    # Verify the temp file was created
+    if os.path.exists(temp_results_path):
+        logger.info(f"Nuclei temp results file created: {temp_results_path}")
+        file_size = os.path.getsize(temp_results_path)
+        logger.info(f"Temp file size: {file_size} bytes")
+        
+        # Copy from temp to media folder using FileField
+        if vuln_assessment.save_results_from_temp(temp_results_path):
+            logger.info(f"Results copied to media folder: {vuln_assessment.nuclei_results_file.name}")
+            
+            # Get the final file path for parsing
+            final_results_path = vuln_assessment.nuclei_results_file.path
+            logger.info(f"Final results path: {final_results_path}")
+        else:
+            logger.error(f"Failed to copy results from temp to media folder")
+            return
+    else:
+        logger.error(f"Nuclei temp results file was not created: {temp_results_path}")
+        return
+
+    # Parse vulnerabilities from the saved file
     try:
-        vulnerabilities = get_search_output("feed.json")
+        vulnerabilities = get_nuclei_output(final_results_path)
         logger.info(f"Found {len(vulnerabilities)} vulnerabilities for assessment {vuln_assessment_id}")
     except Exception as e:
-        logger.error(f"Error parsing vulnerabilities from feed.json: {e}")
+        logger.error(f"Error parsing vulnerabilities from {final_results_path}: {e}")
         vulnerabilities = []
 
-    # delete the feed file
-    cleanup = subprocess.run(["rm", "feed.json"], capture_output=True, text=True)
-
-    if cleanup.returncode != 0:
-        logger.error(f"Error deleting feed.json file: {cleanup.stderr}")
-    else:
-        logger.debug(f"Successfully cleaned up feed.json file")
-
+    # Save vulnerability results to the assessment
     try:
-        create_found_vulnerabilities(vuln_assessment, vulnerabilities)
-        logger.info(f"Successfully created vulnerability records for assessment {vuln_assessment_id}")
+        save_vuln_assessment_results(vuln_assessment, vulnerabilities)
+        logger.info(f"Successfully processed vulnerability results for assessment {vuln_assessment_id}")
     except Exception as e:
-        logger.error(f"Error creating vulnerability records: {e}")
+        logger.error(f"Error saving vulnerability results: {e}")
 
-    vuln_list = list()
-
-    for vuln in vuln_assessment.vulnerabilities.all():
-        vuln_list.append(
-            f"{vuln.vulnerability_type}: ({vuln.info}) on {vuln_assessment.website}"
-        )
-
+    # Mark assessment as ready and send email
     try:
         vuln_assessment.ready = True
         vuln_assessment.save()

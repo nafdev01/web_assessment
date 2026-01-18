@@ -5,86 +5,47 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 
-from .models import Classification, FoundVulnerability
-
 logger = logging.getLogger(__name__)
 
 
-def get_search_output(input_file):
-    logger.info(f"Parsing vulnerabilities from {input_file}")
+def get_nuclei_output(results_file):
+    """Parse vulnerabilities from nuclei JSON output file"""
+    logger.info(f"Parsing vulnerabilities from nuclei results: {results_file}")
     
     try:
-        # Read JSON data from input file
-        with open(input_file, "r") as f:
-            data = json.load(f)
+        # Read JSON data from nuclei results file
+        with open(results_file, "r") as f:
+            # Nuclei outputs JSONL (JSON Lines) format - one JSON object per line
+            vulnerabilities = []
+            for line in f:
+                if line.strip():
+                    try:
+                        vuln_data = json.loads(line)
+                        vulnerabilities.append(vuln_data)
+                    except json.JSONDecodeError as e:
+                        logger.warning(f"Error decoding JSON line: {e}")
+                        continue
     except FileNotFoundError:
-        logger.error(f"Input file {input_file} not found")
+        logger.error(f"Nuclei results file {results_file} not found")
         return []
-    except json.JSONDecodeError as e:
-        logger.error(f"Error decoding JSON from {input_file}: {e}")
+    except Exception as e:
+        logger.error(f"Error reading nuclei results from {results_file}: {e}")
         return []
 
-    # Extract vulnerabilities section
-    vulnerabilities = data.get("vulnerabilities", {})
-
-    # Extract found vulnerabilities
-    found_vulnerabilities = []
-    for vulnerability, details in vulnerabilities.items():
-        if details:
-            for detail in details:
-                entry = {"Vulnerability": vulnerability, **detail}
-                if entry not in found_vulnerabilities:
-                    found_vulnerabilities.append(entry)
-
-    logger.info(f"Parsed {len(found_vulnerabilities)} unique vulnerabilities from {input_file}")
-    return found_vulnerabilities
+    logger.info(f"Parsed {len(vulnerabilities)} vulnerabilities from {results_file}")
+    return vulnerabilities
 
 
-def create_found_vulnerabilities(assessment, vulnerabilities):
-    logger.info(f"Creating {len(vulnerabilities)} vulnerability records for assessment {assessment.id}")
+def save_vuln_assessment_results(assessment, vulnerabilities):
+    """Mark assessment as having results - vulnerability structure to be implemented later"""
+    logger.info(f"Assessment {assessment.id} completed with {len(vulnerabilities)} vulnerabilities found")
     
-    # Create found vulnerabilities
-    created_count = 0
-    for vulnerability in vulnerabilities:
-        try:
-            found_vulnerability = FoundVulnerability(
-                vuln_assessment=assessment,
-                vulnerability_type=vulnerability["Vulnerability"],
-                method=vulnerability["method"],
-                path=vulnerability["path"],
-                info=vulnerability["info"],
-                level=vulnerability["level"],
-                parameter=vulnerability["parameter"],
-                http_request=vulnerability["http_request"],
-                curl_command=vulnerability["curl_command"],
-            )
-            found_vulnerability.save()
-            created_count += 1
-
-            # Link the vulnerability to the appropriate classification
-            classification_name = vulnerability["Vulnerability"]
-            try:
-                classification = Classification.objects.get(name=classification_name)
-                found_vulnerability.classification.add(classification)
-                logger.debug(f"Linked vulnerability to classification: {classification_name}")
-            except Classification.DoesNotExist:
-                logger.warning(f"No Classification found for name {classification_name}")
-            except Exception as e:
-                logger.error(f"Error linking classification to found vulnerability: {e}")
-        except Exception as e:
-            logger.error(f"Error creating vulnerability record: {e}")
+    if not vulnerabilities:
+        logger.info(f"No vulnerabilities found for assessment {assessment.id}")
     
-    logger.info(f"Successfully created {created_count} vulnerability records for assessment {assessment.id}")
-
-
-# def dummy_conduct_assessment(sender_email):
-#     try:
-#         send_feedback_email_task.delay(sender_email)
-#         return True
-#     except Exception as e:
-#         # Log the error or handle it in a way appropriate for your application
-#         print(f"An error occurred while sending the assessment email: {e}")
-#         return False
+    # Vulnerability storage structure will be implemented later
+    # For now, just log the count
+    logger.info(f"Nuclei results saved to: {assessment.nuclei_results_file.name if assessment.nuclei_results_file else 'N/A'}")
 
 
 def send_successful_assessment_email(detail_url, vuln_assessment):

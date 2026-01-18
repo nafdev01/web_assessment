@@ -162,11 +162,35 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "INFO",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "simple",
         },
-        "file": {
+        "info_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "info.log",
+            "maxBytes": 1024 * 1024 * 10,  # 10 MB
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "debug_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "debug.log",
+            "maxBytes": 1024 * 1024 * 10,  # 10 MB
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "error.log",
+            "maxBytes": 1024 * 1024 * 10,  # 10 MB
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+        "warning_file": {
             "level": "WARNING",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": BASE_DIR / "warning.log",
@@ -174,18 +198,10 @@ LOGGING = {
             "backupCount": 5,
             "formatter": "verbose",
         },
-        "app_file": {
-            "level": "INFO",
+        "critical_file": {
+            "level": "CRITICAL",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": BASE_DIR / "app.log",
-            "maxBytes": 1024 * 1024 * 10,  # 10 MB
-            "backupCount": 5,
-            "formatter": "verbose",
-        },
-        "security_file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": BASE_DIR / "security.log",
+            "filename": BASE_DIR / "critical.log",
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 5,
             "formatter": "verbose",
@@ -193,22 +209,27 @@ LOGGING = {
     },
     "loggers": {
         "django": {
-            "handlers": ["console", "file"],
+            "handlers": ["console", "info_file", "warning_file", "error_file", "critical_file"],
             "level": "INFO",
             "propagate": False,
         },
         "accounts": {
-            "handlers": ["console", "app_file", "security_file"],
-            "level": "INFO",
+            "handlers": ["console", "info_file", "debug_file", "warning_file", "error_file", "critical_file"],
+            "level": "DEBUG",
             "propagate": False,
         },
         "assessment": {
-            "handlers": ["console", "app_file"],
-            "level": "INFO",
+            "handlers": ["console", "info_file", "debug_file", "warning_file", "error_file", "critical_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "notifications": {
+            "handlers": ["console", "info_file", "debug_file", "warning_file", "error_file", "critical_file"],
+            "level": "DEBUG",
             "propagate": False,
         },
         "": {
-            "handlers": ["console", "file"],
+            "handlers": ["console", "warning_file", "error_file", "critical_file"],
             "level": "WARNING",
             "propagate": True,
         },

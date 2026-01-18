@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}>_ NOTIFICATIONS // SYSTEM ALERTS{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">> NOTIFICATIONS</h1>
+        <p class="page-subtitle">System alerts and messages</p>
+    </div>
+
+    <div class="notifications-header">
+        <div class="notification-stats">
+            <span class="stat-label">TOTAL:</span>
+            <span class="stat-value">{{ notifications.count }}</span>
+            <span class="stat-separator">|</span>
+            <span class="stat-label">UNREAD:</span>
+            <span class="stat-value {% if unread_count > 0 %}stat-alert{% endif %}">{{ unread_count }}</span>
+        </div>
+        {% if unread_count > 0 %}
+        <a href="?mark_all_read=true" class="btn-secondary">MARK_ALL_READ</a>
+        {% endif %}
+    </div>
+
+    {% if notifications %}
+        <div class="notifications-list">
+            {% for notification in notifications %}
+            <div class="notification-item {% if not notification.is_read %}notification-unread{% endif %} notification-{{ notification.notification_type }}">
+                <div class="notification-header">
+                    <div class="notification-type-badge">
+                        {% if notification.notification_type == 'success' %}[✓]{% endif %}
+                        {% if notification.notification_type == 'info' %}[i]{% endif %}
+                        {% if notification.notification_type == 'warning' %}[!]{% endif %}
+                        {% if notification.notification_type == 'error' %}[X]{% endif %}
+                        {{ notification.notification_type|upper }}
+                    </div>
+                    <div class="notification-time">{{ notification.created_at|date:"Y-m-d H:i:s" }}</div>
+                    {% if not notification.is_read %}
+                    <a href="?mark_read={{ notification.id }}" class="notification-mark-read">MARK_READ</a>
+                    {% endif %}
+                </div>
+                <div class="notification-title">{{ notification.title }}</div>
+                <div class="notification-message">{{ notification.message }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="panel-section">
+            <div class="empty-state">
+                <div class="empty-icon">[_]</div>
+                <div class="empty-text">NO_NOTIFICATIONS_FOUND</div>
+                <div class="empty-subtext">System message queue is empty</div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

@@ -4,7 +4,7 @@
 set -e
 
 echo "Waiting for PostgreSQL to be ready..."
-while ! pg_isready -h db -U ${POSTGRES_USER}; do
+while ! pg_isready -h db -U ${POSTGRES_USER} -d ${POSTGRES_DB}; do
   sleep 1
 done
 echo "PostgreSQL is ready!"

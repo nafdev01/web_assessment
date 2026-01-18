@@ -26,6 +26,10 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 # Parse ALLOWED_HOSTS from environment variable (comma-separated)
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:8000").split(
+    ","
+)
+
 # Application definition
 
 INSTALLED_APPS = [

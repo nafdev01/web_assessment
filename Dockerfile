@@ -15,10 +15,15 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     gcc \
     python3-dev \
-    musl-dev \
     libpq-dev \
     curl \
     unzip \
+    pkg-config \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Nuclei

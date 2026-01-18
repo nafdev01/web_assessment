@@ -1,33 +1,72 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Log in{% endblock %}
-
+{% block title %}>_ WVAT // Login{% endblock %}
 
 {% block content %}
-<section class="min-h-screen flex items-center justify-center py-12 px-4">
-	<div class="w-full max-w-md">
-		<h2 class="text-3xl font-bold text-center mb-8">Log in</h2>
-		<form class="space-y-4" method="post">
-			{% csrf_token %}
-			<div>
-				<input type="text" name="username" autofocus autocapitalize="none" autocomplete="username"
-					maxlength="150" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Username" required
-					id="id_username">
-			</div>
-			<div>
-				<input type="password" name="password" autocomplete="current-password" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-					placeholder="Password" required id="id_password">
-			</div>
-			<div class="flex justify-center">
-				<button id="login-button" class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition" type="submit">Login</button>
-			</div>
-		</form>
-		<div class="flex flex-col items-center space-y-2 pt-6">
-			<a class="text-yellow-600 hover:text-yellow-700 transition" href="{% url 'password_reset' %}">Forgot your password?</a>
-			<p class="text-gray-600">or</p>
-			<a class="text-green-600 hover:text-green-700 transition" href="{% url 'signup' %}">Don't have an account? Register here</a>
-		</div>
-	</div>
-</section>
+<div class="container">
+    <section class="panel-section" style="max-width: 500px; margin: 80px auto;">
+        <div class="section-header">
+            <h2 class="section-title">User_Authentication</h2>
+            <span class="section-badge">Login</span>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="alert alert-error" style="margin-bottom: 24px;">
+                    [!] AUTHENTICATION_FAILED: Invalid credentials provided
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                <label class="input-label">Username</label>
+                <input
+                    type="text"
+                    name="username"
+                    class="form-control"
+                    placeholder="Enter username"
+                    autofocus
+                    autocapitalize="none"
+                    autocomplete="username"
+                    maxlength="150"
+                    required
+                    id="id_username"
+                >
+            </div>
+
+            <div class="input-wrapper">
+                <label class="input-label">Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    placeholder="Enter password"
+                    autocomplete="current-password"
+                    required
+                    id="id_password"
+                >
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px;">
+                <a href="{% url 'password_reset' %}" style="font-family: var(--font-hud); font-size: 12px;">
+                    Reset_Password
+                </a>
+                <button type="submit" class="btn-execute">
+                    AUTHENTICATE
+                </button>
+            </div>
+        </form>
+
+        <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-tech);">
+            <p style="font-family: var(--font-hud); font-size: 12px; color: var(--text-dim); margin-bottom: 8px;">
+                NO_ACCOUNT_FOUND?
+            </p>
+            <a href="{% url 'signup' %}" class="btn-secondary">
+                CREATE_ACCOUNT
+            </a>
+        </div>
+    </section>
+</div>
 {% endblock content %}

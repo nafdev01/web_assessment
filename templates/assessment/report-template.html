@@ -5,209 +5,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ assessment.client.get_full_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Spline Sans Mono', monospace;
         }
-
-        section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .card {
-            border: 1px solid #000;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-        }
-
-        .card-body {
-            padding: 10px;
-        }
-
-        .card-text {
-            font-size: 1.5rem;
-        }
-
-        .accordion-button {
-            background-color: #f8f9fa;
-            border: 1px solid #000;
-            border-radius: 5px;
-            color: #000;
-            font-size: 1.5rem;
-            margin: 5px;
-            padding: 10px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .accordion-button:hover {
-            background-color: #e9ecef;
-        }
-
-        .accordion-body {
-            padding: 10px;
-        }
-
-        .link-success {
-            color: #198754;
-            text-decoration: none;
-        }
-
-        .link-primary {
-            color: #0d6efd;
-            padding: 5px;
-        }
-
-        .display-2 {
-            font-size: 7rem;
-            text-align: center;
-            font-weight: lighter;
-            padding-top: 0px;
-            padding-bottom: 0px;
-            margin-bottom: 0px;
-        }
-
-        .display-3 {
-            font-size: 4rem;
-            text-align: center;
-            font-weight: lighter;
-            text-decoration: underline;
-        }
-
-        .text-uppercase {
-            text-transform: uppercase;
-        }
-
-        #vulnerabilityAccordion {
-            width: 80%;
-        }
-
-        ul.reference-list {
-            list-style-type: none;
-            padding: 20px;
-            margin-left: 40px;
-        }
-
-        ul.reference-list li.reference-list-item {
-            padding: 5px;
-            border: none;
-            font-size: 1.5rem;
-        }
-
-        .fs-5 {
-            font-size: 1.5rem;
-        }
-
-        .display-4 {
-            font-size: 2.5rem;
-            text-align: center;
-            font-weight: lighter;
-            text-decoration: underline;
-            border: none;
-            padding: 0px;
-            margin: 0px;
-        }
     </style>
 </head>
 
-<body>
-    <section class="m-5">
-        <h4 class="text-center display-2">Report</h4>
+<body class="bg-gray-50">
+    <section class="max-w-7xl mx-auto px-4 py-8">
+        <h1 class="text-7xl text-center font-light mb-8">Report</h1>
 
-        <div class="d-flex justify-content-center mb-3 p-3">
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-text">
-                        <span class="fs-5">CLIENT:</span>
-                        <span class="fs-5  fst-italic">&nbsp;{{ assessment.client.get_full_name }}</span>
-                    </p>
-                    <p class="card-text">
-                        <span class="fs-5">WEBSITE:</span>
-                        <span class="fs-5 fst-italic">&nbsp;
-                            <a class="link-success" href="{{ assessment.website }}" target="_blank">
-                                {{ assessment.website }}</a>
-                        </span>
-                    </p>
-                    <p class="card-text">
-                        <span class="fs-5">ASSESSED ON:</span>
-                        <span class="fs-5  fst-italic">&nbsp;{{ assessment.tested_on }}</span>
-                    </p>
-                </div>
+        <div class="flex justify-center mb-8">
+            <div class="border border-black rounded-lg shadow-lg p-6">
+                <p class="text-2xl mb-2">
+                    <span class="font-normal">CLIENT:</span>
+                    <span class="italic">&nbsp;{{ assessment.client.get_full_name }}</span>
+                </p>
+                <p class="text-2xl mb-2">
+                    <span class="font-normal">WEBSITE:</span>
+                    <span class="italic">&nbsp;
+                        <a class="text-green-600 hover:text-green-700 no-underline" href="{{ assessment.website }}" target="_blank">
+                            {{ assessment.website }}</a>
+                    </span>
+                </p>
+                <p class="text-2xl">
+                    <span class="font-normal">ASSESSED ON:</span>
+                    <span class="italic">&nbsp;{{ assessment.tested_on }}</span>
+                </p>
             </div>
         </div>
 
+        <h2 class="text-6xl text-center font-light underline mb-8">Vulnerabilities We Found</h2>
 
-        <h3 class="display-3 text-center">Vulnerabilities We Found</h3>
+        <div class="w-4/5 mx-auto space-y-2">
+            {% if assessment.vulnerabilities.all %}
+                {% for vulnerability in assessment.vulnerabilities.all %}
+                <div class="border border-black rounded-lg overflow-hidden">
+                    <button 
+                        class="w-full bg-gray-100 hover:bg-gray-200 border border-black rounded-md p-4 text-left transition-colors duration-200"
+                        onclick="toggleAccordion('collapse{{vulnerability.id}}')"
+                        type="button">
+                        <p class="text-2xl font-bold text-center">{{forloop.counter}}. {{ vulnerability.info }}</p>
+                    </button>
+                    <div id="collapse{{vulnerability.id}}" class="hidden">
+                        <div class="p-6 bg-white">
+                            <p class="text-xl mb-3">
+                                <strong>Vulnerability Category:</strong> {{ vulnerability.vulnerability_type }}
+                            </p>
+                            <p class="text-xl mb-3">
+                                <strong>Method:</strong> {{ vulnerability.method }}
+                            </p>
+                            <p class="text-xl mb-3">
+                                <strong>Path:</strong> {{ assessment.website }}{{ vulnerability.path }}
+                            </p>
+                            <p class="text-xl mb-3">
+                                <strong>Level:</strong> {{ vulnerability.level }}
+                            </p>
+                            <p class="text-xl mb-3">
+                                <strong>Parameter:</strong> {{ vulnerability.parameter }}
+                            </p>
+                            <p class="text-xl mb-3">
+                                <strong>HTTP Request:</strong> {{ vulnerability.http_request }}
+                            </p>
+                            <p class="text-xl mb-3">
+                                <strong>Found On:</strong> {{ vulnerability.found_on }}
+                            </p>
 
-        <div class="accordion" id="vulnerabilityAccordion">
-            {% for vulnerability in assessment.vulnerabilities.all %}
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapse{{vulnerability.id}}" aria-expanded="true"
-                        aria-controls="collapse{{vulnerability.id}}">
-                        <p class="fs-5 fw-bold text-center">{{forloop.counter}}. {{ vulnerability.info }}</p>
-                    </div>
-                </h2>
-                <div id="collapse{{vulnerability.id}}" class="accordion-collapse collapse"
-                    data-bs-parent="#vulnerabilityAccordion">
-                    <div class="accordion-body">
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>Vulnerability Category:</strong> {{ vulnerability.vulnerability_type }}
-                        </p>
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>Method:</strong> {{ vulnerability.method }}
-                        </p>
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>Path:&nbsp;</strong>{{ assessment.website }}{{ vulnerability.path }}
-                        </p>
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>Level:</strong> {{ vulnerability.level }}
-                        </p>
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>Parameter:</strong> {{ vulnerability.parameter }}
-                        </p>
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>HTTP Request:</strong> {{ vulnerability.http_request }}
-                        </p>
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>Found On:</strong> {{ vulnerability.found_on }}
-                        </p>
+                            {% for classification in vulnerability.classification.all %}
+                            <p class="text-xl mb-3">
+                                <strong>Description:</strong>
+                                <span>{{ classification.description }}</span>
+                            </p>
+                            <p class="text-xl mb-3">
+                                <strong>Solution:</strong>
+                                <span>{{ classification.solution }}</span>
+                            </p>
 
-                        {% for classification in vulnerability.classification.all %}
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>Description: </strong>
-                            <span class="mbr-fonts-style display-9">{{ classification.description }}</span>
-                        </p>
-                        <p class="card-text mbr-fonts-style mb-0 display-7">
-                            <strong>Solution: </strong>
-                            <span class="mbr-fonts-style display-9">{{ classification.solution }}</span>
-                        </p>
-
-                        <div class="card px-2 mt-3">
-                            <h2 class="display-4">References</h2>
-                            <ul class="reference-list">
-                                {% for reference in classification.references.all %}
-                                <li class="reference-list-item">
-                                    <a style="text-decoration: dashed;" class="link-primary"
-                                        href="{{ reference.reference_link }}">
-                                        {{ reference.name }}
-                                    </a>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                            <div class="border border-gray-300 rounded-lg p-4 mt-6">
+                                <h3 class="text-4xl text-center font-light underline mb-4">References</h3>
+                                <ul class="list-none pl-10 space-y-2">
+                                    {% for reference in classification.references.all %}
+                                    <li class="text-2xl">
+                                        <a class="text-blue-600 hover:text-blue-800 underline" 
+                                           href="{{ reference.reference_link }}" 
+                                           target="_blank">
+                                            {{ reference.name }}
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-12">
+                    <p class="text-3xl text-gray-600 font-light">No vulnerabilities were found.</p>
+                </div>
+            {% endif %}
         </div>
     </section>
 
+    <script>
+        function toggleAccordion(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('hidden');
+        }
+    </script>
 </body>
 
 </html>

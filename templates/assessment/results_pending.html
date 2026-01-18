@@ -1,25 +1,117 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ site_name }} | Report: {{ assessment }}{% endblock title %}
+{% block title %}>_ WVAT // Scan In Progress{% endblock title %}
 
 {% block content %}
+<div class="container">
+    <section class="scan-section">
+        <div class="section-header">
+            <h2 class="section-title">Assessment_Status</h2>
+            <span class="section-badge" style="background: var(--neon-cyan); color: #000;">Processing</span>
+        </div>
 
-<section class="container my-5">
-    <h1 class="text-center mb-4">Report for {{ assessment }}</h1>
+        <div style="margin-bottom: 24px;">
+            <p style="font-family: var(--font-hud); font-size: 14px; color: var(--text-dim);">
+                <span style="color: var(--neon-cyan);">TARGET:</span> {{ assessment.website }}
+            </p>
+            <p style="font-family: var(--font-hud); font-size: 12px; color: var(--text-dim); margin-top: 8px;">
+                Assessment ID: {{ assessment.id }} | Started: {{ assessment.tested_on|date:"Y-m-d H:i:s" }}
+            </p>
+        </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title text-center mb-4">Assessment Status</h5>
-                    <div class="text-center">
-                        <p class="mb-4">Please wait while we process the assessment. We will send the results by email
-                            when they are ready.</p>
-                    </div>
-                </div>
+        <!-- Fake Terminal Log -->
+        <div class="scan-log active" id="scanLog">
+            <div class="log-line success">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Initializing Wapiti scan engine...
+            </div>
+            <div class="log-line success">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Target locked: {{ assessment.website }}
+            </div>
+            <div class="log-line info">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Loading vulnerability templates (847 modules)...
+            </div>
+            <div class="log-line success">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> [200 OK] Connection established
+            </div>
+            <div class="log-line info">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Crawling target structure...
+            </div>
+            <div class="log-line info">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Running SQL injection detection modules...
+            </div>
+            <div class="log-line info">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Running XSS vulnerability tests...
+            </div>
+            <div class="log-line info">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Scanning for CSRF vulnerabilities...
+            </div>
+            <div class="log-line info">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Checking authentication mechanisms...
+            </div>
+            <div class="log-line info">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Analyzing response headers and security policies...
+            </div>
+            <div class="log-line warning">
+                <span class="timestamp">[{{ assessment.tested_on|date:"H:i:s" }}]</span>
+                <span class="prefix">></span> Assessment in progress. This may take 15-20 minutes...
+            </div>
+            <div class="log-line">
+                <span class="prefix">></span> <span class="log-cursor"></span>
+            </div>
+        </div>
+
+        <div style="margin-top: 32px; padding: 20px; background: rgba(0, 229, 255, 0.1); border: 1px solid var(--neon-cyan); border-left-width: 4px;">
+            <p style="font-family: var(--font-hud); font-size: 13px; color: var(--neon-cyan); line-height: 1.8;">
+                <strong style="color: var(--text-bright);">[EMAIL_NOTIFICATION]</strong><br>
+                You will receive an email at <strong style="color: var(--text-bright);">{{ user.email }}</strong> when the assessment is complete.
+                <br><br>
+                You can safely close this page. The scan continues running in the background.
+            </p>
+        </div>
+    </section>
+
+    <!-- Auto-refresh instructions -->
+    <div class="panel-section">
+        <div class="section-header">
+            <h2 class="section-title">What_Happens_Next</h2>
+        </div>
+
+        <div class="features-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="feature-card">
+                <div class="feature-icon">[AUTO]</div>
+                <h3 class="feature-title">Background_Processing</h3>
+                <p class="feature-description">
+                    The Wapiti scanner is running independently. Your assessment will continue even if you close this browser.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[EMAIL]</div>
+                <h3 class="feature-title">Email_Notification</h3>
+                <p class="feature-description">
+                    You'll receive an automated email with a direct link to your results when the scan completes (typically 15-20 minutes).
+                </p>
             </div>
         </div>
     </div>
-</section>
+</div>
 
-{% endblock %}
+{% block extra_scripts %}
+<script>
+    // Auto-reload page every 30 seconds to check if assessment is ready
+    setTimeout(function() {
+        location.reload();
+    }, 30000);  // 30 seconds
+</script>
+{% endblock extra_scripts %}
+{% endblock content %}

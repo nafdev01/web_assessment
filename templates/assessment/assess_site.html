@@ -1,20 +1,78 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Assess URL{% endblock title %}
+{% block title %}>_ WVAT // Initialize Assessment{% endblock title %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center px-4">
-    <form action="" method="post" class="w-full max-w-2xl">
-        {% csrf_token %}
-        <div class="flex">
-            <input id="url-input" type="url" name="url_here" placeholder="Enter url here" 
-                class="flex-1 px-4 py-3 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-green-500"
-                aria-label="Url to test" aria-describedby="test-btn" required>
-            <button class="px-6 py-3 bg-green-600 text-white rounded-r hover:bg-green-700 transition" 
-                id="test-btn" type="submit">Test</button>
+<div class="container">
+    <section class="scan-section">
+        <div class="section-header">
+            <h2 class="section-title">Initialize_Assessment</h2>
+            <span class="section-badge">Ready</span>
         </div>
-    </form>
-</div>
 
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <label class="input-label">Target URL</label>
+                    <span class="input-prefix">root@wvat:~$</span>
+                    <input
+                        type="url"
+                        name="url_here"
+                        class="console-input"
+                        id="targetUrl"
+                        placeholder="https://example.com"
+                        required
+                    >
+                </div>
+                <button type="submit" class="btn-execute" id="scanBtn">
+                    RUN_SCAN
+                </button>
+            </div>
+        </form>
+
+        <div style="margin-top: 32px; padding: 20px; background: var(--bg-void); border: 1px solid var(--border-tech);">
+            <p style="font-family: var(--font-hud); font-size: 12px; color: var(--text-dim); line-height: 1.6;">
+                <span style="color: var(--neon-cyan);">[INFO]</span> Assessment will scan for 180+ vulnerability types including SQL Injection, XSS, CSRF, and more.
+                <br>
+                <span style="color: var(--neon-yellow);">[WARN]</span> Scans typically take 15-20 minutes to complete.
+                <br>
+                <span style="color: var(--neon-green);">[NOTE]</span> You will receive an email notification when the assessment is ready.
+            </p>
+        </div>
+    </section>
+
+    <!-- Quick Guide -->
+    <div class="page-header">
+        <h2 class="page-title">Assessment_Guide</h2>
+        <p class="page-subtitle">What to expect from the vulnerability scan</p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">[01]</div>
+            <h3 class="feature-title">URL_Submission</h3>
+            <p class="feature-description">
+                Enter the target URL above. The scanner will automatically discover and test all accessible endpoints on your web application.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">[02]</div>
+            <h3 class="feature-title">Scan_Execution</h3>
+            <p class="feature-description">
+                Wapiti engine performs comprehensive testing for common vulnerabilities. This process runs in the background and takes 15-20 minutes.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">[03]</div>
+            <h3 class="feature-title">Results_Delivery</h3>
+            <p class="feature-description">
+                Receive email notification when complete. View detailed HTML report or download PDF with severity classification and remediation guidance.
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock content %}

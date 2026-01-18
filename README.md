@@ -6,7 +6,7 @@ The platform is engineered to be intuitive and accessible, ensuring users of all
 
 ## Tech Stack
 
-- **Frontend**: HTML, CSS, JavaScript
+- **Frontend**: HTML, Custom CSS, JavaScript
 - **Backend**: Django
 - **Task Queue**: Celery
 - **Message Broker**: Redis

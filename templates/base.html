@@ -1,244 +1,104 @@
 {% load static %}
 <!DOCTYPE html>
-<html class="desktop mbr-site-loaded">
-
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <style data-merge-styles="true"></style>
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta property="og:image" content="">
-    <meta name="twitter:title" content="Home">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    <meta name="description" content="">
-    <title>{% block title %}Home{% endblock title %}</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="{% static 'assets/recaptcha.css' %}">
-    <noscript>
-        <link rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap&display=swap">
-    </noscript>
-    <script src="chrome-extension://nngceckbapebfimnlniiiahkandclblb/content/fido2/page-script.js"
-        id="bw-fido2-page-script"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <meta name="description" content="Web Vulnerability Assessment Tool - Console Command Interface">
+    <title>{% block title %}>_ WVAT // Web Vulnerability Assessment Tool{% endblock title %}</title>
 
-    <link rel="stylesheet" href="{% static 'assets/silverBox.css' %}">
-    <script src="{% static 'assets/silverBox.js' %}"></script>
+    <!-- Google Fonts - Fira Code and Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{% static 'assets/styles.css' %}">
+
+    <!-- jQuery CDN (Latest) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    {% block extra_head %}{% endblock extra_head %}
 </head>
 
 <body>
+    <!-- Navigation - Command Strip -->
+    <nav>
+        <a href="{% url 'home' %}" class="nav-logo">
+            <span class="prompt">>_</span>
+            <span class="brand">WVAT</span>
+        </a>
 
-    {% if messages %}
-    {% for message in messages %}
-    {% if message.tags == 'success' %}
-    <script>
-        var message = "{{ message|safe }}";
-        var alertType = "success";
-
-        silverBox({
-            alertIcon: "success",
-            position: "top-center",
-            text: message,
-            centerContent: true,
-            cancelButton: {
-                text: "OK",
-            }
-        })
-    </script>
-    {% elif message.tags == 'info' %}
-    <script>
-        var message = "{{ message|safe }}";
-        var alertType = "info";
-
-        silverBox({
-            alertIcon: alertType,
-            position: "top-center",
-            text: message,
-            centerContent: true,
-            cancelButton: {
-                text: "OK"
-            }
-        })
-    </script>
-
-    {% elif message.tags == 'warning' %}
-    <script>
-        var message = "{{ message|safe }}";
-        var alertType = "warning";
-
-        silverBox({
-            alertIcon: alertType,
-            position: "top-center",
-            text: message,
-            centerContent: true,
-            cancelButton: {
-                text: "Close"
-            }
-        })
-    </script>
-
-    {% elif message.tags == 'error' %}
-    <script>
-        var message = "{{ message|safe }}";
-        var alertType = "error";
-
-        silverBox({
-            alertIcon: alertType,
-            position: "top-center",
-            text: message,
-            centerContent: true,
-            cancelButton: {
-                text: "Close"
-            }
-        })
-    </script>
-
-    {% endif %}
-    {% endfor %}
-    {% endif %}
-
-    <nav class="fixed top-0 w-full bg-gray-900 shadow-lg z-50">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <!-- Logo and Brand -->
-                <div class="flex items-center space-x-2">
-                    <a href="{% url 'home' %}">
-                        <img src="{% static 'assets/logo.png' %}" alt="Web Assessment Platform" class="h-12">
-                    </a>
-                    <a href="{% url 'home' %}" class="text-white text-xl font-semibold hover:text-gray-200 transition">
-                        Web Assessment
-                    </a>
-                </div>
-
-                <!-- Desktop Navigation Links -->
-                <ul class="hidden lg:flex space-x-6" id="navbarSupportedContent">
-                    <li>
-                        <a href="{% url 'home' %}#" class="text-white hover:text-gray-300 transition">
-                            Home
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'home' %}#services" class="text-white hover:text-gray-300 transition">
-                            Services
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'home' %}#contact" class="text-white hover:text-gray-300 transition">
-                            Contact
-                        </a>
-                    </li>
-                </ul>
-
-                <!-- Authentication Buttons (Desktop) -->
-                <div class="hidden lg:flex space-x-3">
-                    {% if not user.is_authenticated %}
-                        <a href="{% url 'login' %}" class="px-4 py-2 bg-white text-gray-800 rounded hover:bg-gray-100 transition">
-                            Login
-                        </a>
-                        <a href="{% url 'signup' %}" class="px-4 py-2 bg-white text-gray-800 rounded hover:bg-gray-100 transition">
-                            Register
-                        </a>
-                    {% else %}
-                        <a href="{% url 'assess_site' %}" class="px-4 py-2 bg-white text-gray-800 rounded hover:bg-gray-100 transition">
-                            Assess
-                        </a>
-                        <a href="{% url 'log_out' %}" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
-                            Logout
-                        </a>
-                    {% endif %}
-                </div>
-
-                <!-- Mobile Menu Toggle Button -->
-                <button id="mobile-menu-toggle" type="button" class="lg:hidden text-white focus:outline-none" aria-label="Toggle navigation">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Mobile Navigation Menu -->
-            <div id="mobile-menu" class="hidden lg:hidden pb-4">
-                <ul class="space-y-2">
-                    <li>
-                        <a href="{% url 'home' %}#" class="block text-white hover:text-gray-300 transition py-2">
-                            Home
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'home' %}#services" class="block text-white hover:text-gray-300 transition py-2">
-                            Services
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'home' %}#contact" class="block text-white hover:text-gray-300 transition py-2">
-                            Contact
-                        </a>
-                    </li>
-                    {% if not user.is_authenticated %}
-                        <li>
-                            <a href="{% url 'login' %}" class="block px-4 py-2 bg-white text-gray-800 rounded hover:bg-gray-100 transition text-center">
-                                Login
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'signup' %}" class="block px-4 py-2 bg-white text-gray-800 rounded hover:bg-gray-100 transition text-center">
-                                Register
-                            </a>
-                        </li>
-                    {% else %}
-                        <li>
-                            <a href="{% url 'assess_site' %}" class="block px-4 py-2 bg-white text-gray-800 rounded hover:bg-gray-100 transition text-center">
-                                Assess
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'log_out' %}" class="block px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-center">
-                                Logout
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+        <div class="nav-target">
+            <span class="label">TARGET:</span>
+            <span id="currentTarget">NO_TARGET_SET</span>
         </div>
+
+        <ul class="nav-links">
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'assess_site' %}" class="nav-link {% if request.resolver_match.url_name == 'assess_site' %}active{% endif %}">Assess</a></li>
+                <li><a href="{% url 'view_results' %}" class="nav-link {% if request.resolver_match.url_name == 'view_results' %}active{% endif %}">History</a></li>
+                <li><a href="{% url 'log_out' %}" class="nav-link">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+                <li><a href="{% url 'login' %}" class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a></li>
+                <li><a href="{% url 'signup' %}" class="nav-link {% if request.resolver_match.url_name == 'signup' %}active{% endif %}">Register</a></li>
+            {% endif %}
+        </ul>
     </nav>
 
-    <main class="min-vh-100 pt-20">
-        {% block content %}
+    <!-- Alert Container for Django Messages -->
+    <div class="container" style="padding-top: 80px;">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {% if message.tags == 'error' %}[!] ERROR: {% endif %}
+                    {% if message.tags == 'warning' %}[!] WARNING: {% endif %}
+                    {% if message.tags == 'success' %}[✓] SUCCESS: {% endif %}
+                    {% if message.tags == 'info' %}[i] INFO: {% endif %}
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 
+    <main>
+        {% block content %}
         {% endblock content %}
     </main>
 
-    <footer class="bg-gray-900 text-white py-8">
-        <div class="container mx-auto px-4">
-            <p class="text-center text-sm">
-                ©Copyright 2026 Web Assessment - All Rights Reserved
-            </p>
-        </div>
+    <footer>
+        <p class="footer-text">
+            [ <span class="highlight">WVAT</span> // Web Vulnerability Assessment Tool // v1.0.0 ]
+        </p>
     </footer>
 
-    <script src="{% static 'assets/smooth-scroll.js' %}"></script>
-    <script src="{% static 'assets/index.js' %}"></script>
-    <script src="{% static 'assets/navbar-dropdown.js' %}"></script>
-    <script src="{% static 'assets/vimeo_player.js' %}"></script>
-    <script src="{% static 'assets/script.js' %}"></script>
-    <script src="{% static 'assets/formoid.min.js' %}"></script>
-
-    <!-- Mobile Menu Toggle Script -->
+    <!-- Custom Scripts -->
     <script>
+        // Simple alert auto-dismiss
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const mobileMenu = document.getElementById('mobile-menu');
-            
-            if (mobileMenuToggle && mobileMenu) {
-                mobileMenuToggle.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.animation = 'fadeOut 0.3s ease-out';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
         });
-    </script>
-</body>
 
+        // Add fadeOut animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateY(0); }
+                to { opacity: 0; transform: translateY(-10px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+    {% block extra_scripts %}{% endblock extra_scripts %}
+</body>
 </html>

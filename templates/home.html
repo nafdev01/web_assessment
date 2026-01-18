@@ -1,185 +1,229 @@
 {% extends "base.html" %}
 {% load static %}
-{% load django_bootstrap5 %}
+
+{% block title %}>_ WVAT // Home{% endblock title %}
 
 {% block content %}
-<section class="relative min-h-screen flex items-center" id="aheader2-2">
-    <div class="absolute inset-0 bg-white opacity-50"></div>
-    <div class="relative z-10 container mx-auto px-4 py-16">
-        <div class="flex justify-start">
-            <div class="w-full lg:w-2/3">
-                <h1 class="text-5xl lg:text-6xl font-bold mb-4">Unleashing Cybersecurity Excellence</h1>
-                <h2 class="text-3xl lg:text-4xl font-semibold mb-4">Your Trusted Web Application Security
-                    Assessment Platform</h2>
-                <p class="text-lg lg:text-xl mb-6">
-                    Our platform empowers you to identify vulnerabilities, mitigate risks, and enhance your
-                    cybersecurity posture. Stay one step ahead of threats and ensure the integrity of your web
-                    applications.</p>
-                <div class="mt-6">
-                    {% if user.is_authenticated %}
-                    <a class="inline-block px-6 py-3 bg-blue-600 text-white text-lg rounded hover:bg-blue-700 transition" href="{% url 'assess_site' %}">
-                        Start Assessment
-                    </a>
-                    {% else %}
-                    <a class="inline-block px-6 py-3 bg-blue-600 text-white text-lg rounded hover:bg-blue-700 transition" href="{% url 'signup' %}">
-                        Get Started
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
+<div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="hero-title">
+            <span class="accent">WEB_VULNERABILITY</span><br>
+            ASSESSMENT_TOOL
+        </h1>
+        <p class="hero-subtitle">
+            Professional security scanning platform for identifying vulnerabilities in web applications.
+            Execute comprehensive assessments and receive detailed reports with actionable remediation guidance.
+        </p>
+        <div class="hero-cta">
+            {% if user.is_authenticated %}
+                <a href="{% url 'assess_site' %}" class="btn-execute">INITIALIZE_ASSESSMENT</a>
+                <a href="{% url 'view_results' %}" class="btn-secondary">VIEW_HISTORY</a>
+            {% else %}
+                <a href="{% url 'signup' %}" class="btn-execute">GET_STARTED</a>
+                <a href="{% url 'login' %}" class="btn-secondary">LOGIN</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <div class="page-header">
+        <h2 class="page-title">System_Capabilities</h2>
+        <p class="page-subtitle">Professional-grade vulnerability assessment features</p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">[SCAN]</div>
+            <h3 class="feature-title">Automated_Scanning</h3>
+            <p class="feature-description">
+                Comprehensive vulnerability detection powered by Wapiti engine. Identifies SQL injection, XSS, CSRF, and 180+ other attack vectors across your web application.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">[REPORT]</div>
+            <h3 class="feature-title">Detailed_Reports</h3>
+            <p class="feature-description">
+                Professional HTML and PDF reports with severity classification, technical descriptions, and remediation guidance. Complete with external references (OWASP, CWE).
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">[NOTIFY]</div>
+            <h3 class="feature-title">Email_Notifications</h3>
+            <p class="feature-description">
+                Receive automated email alerts when scans complete. Stay informed about your application's security status without constant monitoring.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">[CLASSIFY]</div>
+            <h3 class="feature-title">Severity_Classification</h3>
+            <p class="feature-description">
+                Color-coded vulnerability categorization (Critical, High, Medium, Low) helps prioritize remediation efforts based on actual risk to your systems.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">[TRACK]</div>
+            <h3 class="feature-title">Assessment_History</h3>
+            <p class="feature-description">
+                Access historical scan data to track security improvements over time. Review past assessments and download previous reports on demand.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">[SECURE]</div>
+            <h3 class="feature-title">User_Authentication</h3>
+            <p class="feature-description">
+                Secure account system ensures only authorized personnel access assessment data. All scan results are private to your account.
+            </p>
         </div>
     </div>
-</section>
-<section class="py-16 bg-gray-50" id="services">
-    <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div class="space-y-6">
-                <div class="space-y-4">
-                    <h4 class="text-3xl font-bold text-gray-900">What We Offer</h4>
-                    <p class="text-lg text-gray-600">
-                        Experience the power of proactive protection with our Web Application Security Assessment
-                        Platform. Your security is our mission.
-                    </p>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <p class="text-gray-700 flex-1">
-                            Website vulnerability scanning of your website to identify potential
-                            vulnerabilities.
-                        </p>
-                    </div>
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <p class="text-gray-700 flex-1">
-                            Detailed reports and actionable recommendations for each identified vulnerability.
-                        </p>
-                    </div>
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <p class="text-gray-700 flex-1">
-                            Dedicated customer support from our team of cybersecurity experts.
-                        </p>
-                    </div>
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <p class="text-gray-700 flex-1">
-                            Timely email updates and notifications on your website's security status.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="flex items-center justify-center">
-                <img src="{% static 'assets/web_assessment.jpeg' %}" alt="Web Assessment Platform" class="rounded-lg shadow-lg w-full h-auto object-cover">
-            </div>
+
+    <!-- Statistics Section -->
+    <div class="page-header">
+        <h2 class="page-title">Threat_Landscape</h2>
+        <p class="page-subtitle">Why web application security matters</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card critical">
+            <div class="stat-label">Web App Attacks</div>
+            <div class="stat-value">26%</div>
+        </div>
+        <div class="stat-card high">
+            <div class="stat-label">Daily Attacks</div>
+            <div class="stat-value">94</div>
+        </div>
+        <div class="stat-card medium">
+            <div class="stat-label">Weekly Bot Visits</div>
+            <div class="stat-value">2.6K</div>
+        </div>
+        <div class="stat-card low">
+            <div class="stat-label">Annual Losses</div>
+            <div class="stat-value">$6T</div>
         </div>
     </div>
-</section>
-<section class="py-16" id="afeatures3-5">
-    <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
-                <div class="space-y-4">
-                    <h3 class="text-2xl font-bold text-gray-900">
-                        Vulnerability
-                    </h3>
-                    <p class="text-gray-600">
-                        Web application attacks are involved in 26% of all breaches, making them
-                        the second most common attack pattern. Websites currently experience an average of 94 attacks
-                        every day, and are visited by bots approximately 2,608 times a week
-                    </p>
-                    <div class="pt-2">
-                        <a class="text-blue-600 hover:text-blue-800 hover:underline transition"
-                            href="https://expertinsights.com/insights/50-web-security-stats-you-should-know/">
-                            Read More →
-                        </a>
+
+    <!-- Information Cards -->
+    <div class="vuln-list">
+        <article class="vuln-card critical">
+            <div class="vuln-header">
+                <div class="vuln-title-group">
+                    <h4 class="vuln-title">Vulnerability Landscape</h4>
+                    <span class="vuln-id">SOURCE: Expert Insights 2024</span>
+                </div>
+                <span class="vuln-severity critical">Critical</span>
+            </div>
+            <div class="vuln-body">
+                <p class="vuln-description">
+                    Web application attacks are involved in 26% of all breaches, making them the second most common attack pattern.
+                    Websites currently experience an average of 94 attacks every day, and are visited by malicious bots approximately 2,608 times per week.
+                </p>
+                <div class="vuln-meta">
+                    <div class="vuln-meta-item">
+                        <span class="vuln-meta-label">Category:</span>
+                        <span class="vuln-meta-value">Industry Statistics</span>
+                    </div>
+                    <div class="vuln-meta-item">
+                        <span class="vuln-meta-label">Impact:</span>
+                        <span class="vuln-meta-value">High</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
-                <div class="space-y-4">
-                    <h3 class="text-2xl font-bold text-gray-900">
-                        Risk
-                    </h3>
-                    <p class="text-gray-600">
-                        Poor web application security can lead to the loss of sensitive data, interruptions in business
-                        continuity, and other harmful results of cybercrime. In recent times, such attacks are on a
-                        consistent upward trend, causing estimated losses of close to $6 trillion across industries.
-                    </p>
-                    <div class="pt-2">
-                        <a href="https://hacken.io/discover/what-is-web-application-security-and-why-is-it-important/"
-                            class="text-blue-600 hover:text-blue-800 hover:underline transition">
-                            Read More →
-                        </a>
+        </article>
+
+        <article class="vuln-card high">
+            <div class="vuln-header">
+                <div class="vuln-title-group">
+                    <h4 class="vuln-title">Risk Assessment</h4>
+                    <span class="vuln-id">SOURCE: Hacken Security Analysis</span>
+                </div>
+                <span class="vuln-severity high">High</span>
+            </div>
+            <div class="vuln-body">
+                <p class="vuln-description">
+                    Poor web application security can lead to the loss of sensitive data, interruptions in business continuity,
+                    and other harmful results of cybercrime. In recent times, such attacks are on a consistent upward trend,
+                    causing estimated losses of close to $6 trillion across industries.
+                </p>
+                <div class="vuln-meta">
+                    <div class="vuln-meta-item">
+                        <span class="vuln-meta-label">Category:</span>
+                        <span class="vuln-meta-value">Business Impact</span>
+                    </div>
+                    <div class="vuln-meta-item">
+                        <span class="vuln-meta-label">Trend:</span>
+                        <span class="vuln-meta-value">Increasing</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
-                <div class="space-y-4">
-                    <h3 class="text-2xl font-bold text-gray-900">
-                        Security
-                    </h3>
-                    <p class="text-gray-600">
-                        The world has become more digital, technology is evolving quickly,
-                        and security threats are evolving just as fast. It's important to stay ahead of these threats
-                        to protect your web applications. Thats where we come in.
-                    </p>
-                    <div class="pt-2">
-                        <a href="https://www.stackhawk.com/blog/importance-of-web-application-security-three-benefits/"
-                            class="text-blue-600 hover:text-blue-800 hover:underline transition">
-                            Read More →
-                        </a>
+        </article>
+
+        <article class="vuln-card medium">
+            <div class="vuln-header">
+                <div class="vuln-title-group">
+                    <h4 class="vuln-title">Security Imperative</h4>
+                    <span class="vuln-id">SOURCE: StackHawk Security Blog</span>
+                </div>
+                <span class="vuln-severity medium">Medium</span>
+            </div>
+            <div class="vuln-body">
+                <p class="vuln-description">
+                    The world has become more digital, technology is evolving quickly, and security threats are evolving just as fast.
+                    It's important to stay ahead of these threats to protect your web applications.
+                    Proactive security assessment is essential for modern web development.
+                </p>
+                <div class="vuln-meta">
+                    <div class="vuln-meta-item">
+                        <span class="vuln-meta-label">Category:</span>
+                        <span class="vuln-meta-value">Best Practices</span>
+                    </div>
+                    <div class="vuln-meta-item">
+                        <span class="vuln-meta-label">Action:</span>
+                        <span class="vuln-meta-value">Proactive Assessment</span>
                     </div>
                 </div>
             </div>
-        </div>
+        </article>
     </div>
-</section>
-<section class="py-16 bg-gray-900 text-white" id="contact">
-    <div class="container mx-auto px-4">
-        <div class="max-w-2xl mx-auto">
-            <h1 class="text-4xl font-bold mb-8 text-center">Contact Us</h1>
-            <form action="{% url 'contact' %}" method="post" role="form" class="space-y-6">
-                {% csrf_token %}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="name" class="block text-sm font-medium mb-2">Your Name</label>
-                        <input type="text" name="name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" id="name" required>
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium mb-2">Your Email</label>
-                        <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" name="email" id="email" required>
-                    </div>
-                </div>
-                <div>
-                    <label for="subject" class="block text-sm font-medium mb-2">Subject</label>
-                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" name="subject" id="subject" required>
-                </div>
-                <div>
-                    <label for="message" class="block text-sm font-medium mb-2">Message</label>
-                    <textarea class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" name="message" id="message" rows="6" required></textarea>
-                </div>
-                <div class="flex justify-center">
-                    <button class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition" type="submit">Contact Us</button>
-                </div>
-            </form>
+
+    <!-- Contact Section -->
+    <section class="panel-section" style="margin-top: 48px;">
+        <div class="section-header">
+            <h2 class="section-title">Contact_System</h2>
+            <span class="section-badge">Available</span>
         </div>
-    </div>
-</section>
+
+        <form action="{% url 'contact' %}" method="post">
+            {% csrf_token %}
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px;">
+                <div class="input-wrapper">
+                    <label class="input-label">Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="Your name" required>
+                </div>
+                <div class="input-wrapper">
+                    <label class="input-label">Email</label>
+                    <input type="email" name="email" class="form-control" placeholder="your.email@domain.com" required>
+                </div>
+            </div>
+
+            <div class="input-wrapper">
+                <label class="input-label">Subject</label>
+                <input type="text" name="subject" class="form-control" placeholder="Message subject" required>
+            </div>
+
+            <div class="input-wrapper">
+                <label class="input-label">Message</label>
+                <textarea name="message" class="form-control" rows="6" placeholder="Your message..." required></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn-execute">SEND_MESSAGE</button>
+            </div>
+        </form>
+    </section>
+</div>
 {% endblock content %}
